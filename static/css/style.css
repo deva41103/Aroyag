@@ -1,0 +1,78 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #f4f7fb;
+    height: 100vh;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding-top: 80px;
+    text-align: center;
+}
+
+h1 {
+    font-size: 48px;
+    color: #0a3d62;
+}
+
+.subtitle {
+    margin-top: 10px;
+    color: #555;
+    font-size: 18px;
+}
+
+.cards {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 60px;
+    gap: 20px;
+}
+
+.card {
+    flex: 1;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #333;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+}
+
+.card h2 {
+    margin-bottom: 10px;
+}
+
+.newborn {
+    border-top: 6px solid #1abc9c;
+}
+
+.patient {
+    border-top: 6px solid #3498db;
+}
+
+.doctor {
+    border-top: 6px solid #9b59b6;
+}
+
+.admin-link {
+    margin-top: 40px;
+}
+
+.admin-link a {
+    color: #c0392b;
+    text-decoration: none;
+    font-weight: bold;
+}

@@ -1,0 +1,13 @@
+<h2>Hospital Login</h2>
+
+{% if not otp_sent %}
+<form method="POST">
+  <input name="phone" placeholder="+91XXXXXXXXXX" required>
+  <button type="submit">Send OTP</button>
+</form>
+{% else %}
+<form action="/verify-otp" method="POST">
+  <input name="otp" placeholder="Enter OTP" required>
+  <button type="submit">Verify OTP</button>
+</form>
+{% endif %}
