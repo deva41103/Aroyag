@@ -18,9 +18,9 @@ def patient_login():
         session["phone"] = phone
         session["login_role"] = "patient"
 
-        return render_template("patient_login.html", otp_sent=True)
+        return render_template("patient/patient_login.html", otp_sent=True)
 
-    return render_template("patient_login.html", otp_sent=False)
+    return render_template("patient/patient_login.html", otp_sent=False)
 
 
 # --------------------------------------------------
@@ -38,9 +38,9 @@ def doctor_login():
         session["phone"] = phone
         session["login_role"] = "doctor"
 
-        return render_template("doctor_login.html", otp_sent=True)
+        return render_template("doctor/doctor_login.html", otp_sent=True)
 
-    return render_template("doctor_login.html", otp_sent=False)
+    return render_template("doctor/doctor_login.html", otp_sent=False)
 
 # --------------------------------------------------
 # HOSPITAL LOGIN
@@ -57,9 +57,9 @@ def hospital_login():
         session["phone"] = phone
         session["login_role"] = "hospital"
 
-        return render_template("hospital_login.html", otp_sent=True)
+        return render_template("hospital/hospital_login.html", otp_sent=True)
 
-    return render_template("hospital_login.html", otp_sent=False)
+    return render_template("hospital/hospital_login.html", otp_sent=False)
 
 
 # --------------------------------------------------

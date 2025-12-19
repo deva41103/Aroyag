@@ -9,7 +9,7 @@ def patient_dashboard():
         return redirect("/patient")
 
     return render_template(
-        "patient_dashboard.html",
+        "patient/patient_dashboard.html",
         phone=session.get("phone")
     )
 
@@ -30,7 +30,7 @@ def create_profile():
 
         return redirect("/patient/dashboard")
 
-    return render_template("patient_create_profile.html")
+    return render_template("patient/patient_create_profile.html")
 
 @dashboard_bp.route("/doctor/create-profile", methods=["GET", "POST"])
 def doctor_create_profile():
@@ -50,19 +50,19 @@ def doctor_create_profile():
 
         return redirect("/doctor/pending-verification")
 
-    return render_template("doctor_create_profile.html")
+    return render_template("doctor/doctor_create_profile.html")
 
 @dashboard_bp.route("/doctor/dashboard")
 def doctor_dashboard():
     if session.get("role") != "doctor":
         return redirect("/doctor")
 
-    return render_template("doctor_dashboard.html")
+    return render_template("doctor/doctor_dashboard.html")
 
 
 @dashboard_bp.route("/doctor/pending-verification")
 def doctor_pending():
-    return render_template("doctor_pending.html")
+    return render_template("doctor/doctor_pending.html")
 
 
 @dashboard_bp.route("/hospital/create-profile", methods=["GET", "POST"])
@@ -82,15 +82,15 @@ def hospital_create_profile():
 
         return redirect("/hospital/pending-verification")
 
-    return render_template("hospital_create_profile.html")
+    return render_template("hospital/hospital_create_profile.html")
 
 @dashboard_bp.route("/hospital/dashboard")
 def hospital_dashboard():
     if session.get("role") != "hospital":
         return redirect("/hospital")
 
-    return render_template("hospital_dashboard.html")
+    return render_template("hospital/hospital_dashboard.html")
 
 @dashboard_bp.route("/hospital/pending-verification")
 def hospital_pending():
-    return render_template("hospital_pending.html")
+    return render_template("hospital/hospital_pending.html")
