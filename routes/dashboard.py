@@ -1,3 +1,5 @@
+from datetime import datetime
+import random
 from flask import Blueprint, render_template, request, session, redirect
 from config import supabase
 
@@ -8,9 +10,18 @@ def patient_dashboard():
     if session.get("role") != "patient":
         return redirect("/patient")
 
+    profile = (
+        supabase
+        .table("patient_profiles")
+        .select("health_id, email, blood_group, city, state")
+        .eq("user_id", session["user_id"])
+        .single()
+        .execute()
+    )
+    
     return render_template(
         "patient/patient_dashboard.html",
-        phone=session.get("phone")
+        profile=profile.data
     )
 
 @dashboard_bp.route("/patient/create-profile", methods=["GET", "POST"])
@@ -18,14 +29,32 @@ def create_profile():
     if session.get("role") != "patient":
         return redirect("/patient")
 
+    user_id = session["user_id"]
+
+    # Fetch existing profile (if any)
+    existing = (
+        supabase
+        .table("patient_profiles")
+        .select("health_id")
+        .eq("user_id", user_id)
+        .execute()
+    )
+
+    # Generate Health ID ONLY if not present
+    if not existing.data or not existing.data[0]["health_id"]:
+        health_id = f"HL-{datetime.now().year}-{random.randint(100000, 999999)}"
+    else:
+        health_id = existing.data[0]["health_id"]
+
     if request.method == "POST":
         supabase.table("patient_profiles").upsert({
-            "user_id": session["user_id"],
+            "user_id": user_id,
             "email": request.form["email"],
             "blood_group": request.form["blood_group"],
             "city": request.form["city"],
             "state": request.form["state"],
-            "completed": True
+            "completed": True,
+            "health_id": health_id
         }).execute()
 
         return redirect("/patient/dashboard")

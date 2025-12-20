@@ -1,0 +1,31 @@
+<h2>Patient Medical Records</h2>
+
+<a href="/doctor/patient/{{ patient_id }}/add">➕ Add New Record</a>
+<hr>
+
+{% if records %}
+  {% for r in records %}
+    <div style="border:1px solid #ccc; padding:12px; margin-bottom:15px">
+      <h3>{{ r.title }}</h3>
+      <p>{{ r.description }}</p>
+      <small>{{ r.created_at }}</small>
+
+      <h4>Attachments</h4>
+      {% if r.medical_attachments %}
+        <ul>
+          {% for a in r.medical_attachments %}
+            <li>
+              <a href="{{ a.file_url }}" target="_blank">
+                {{ a.file_name }}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>No attachments</p>
+      {% endif %}
+    </div>
+  {% endfor %}
+{% else %}
+  <p>No medical records found.</p>
+{% endif %}

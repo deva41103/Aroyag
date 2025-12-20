@@ -1,2 +1,49 @@
 <h2>Doctor Dashboard</h2>
 <p>Welcome, Doctor.</p>
+
+<hr>
+
+<div style="max-width:600px">
+
+  <!-- SEARCH PATIENT -->
+  <div style="border:1px solid #ccc; padding:16px; margin-bottom:20px">
+    <h3>🔍 Search Patient</h3>
+    <p>Find patient using Health ID to view or add medical records.</p>
+
+    <form method="post" action="/doctor/search-patient">
+      <input
+        type="text"
+        name="health_id"
+        placeholder="Enter Patient Health ID"
+        required
+        style="width:100%; padding:8px; margin-bottom:10px"
+      >
+
+      <button type="submit">Search Patient</button>
+    </form>
+  </div>
+
+  <!-- QUICK ACTIONS -->
+  <div style="border:1px solid #ccc; padding:16px">
+    <h3>⚡ Quick Actions</h3>
+
+    <ul style="line-height:2">
+      <li>
+        <a href="/doctor/search-patient">📁 View Patient Medical Records</a>
+      </li>
+      <li>
+        <a href="/doctor/profile">👤 View / Edit Profile</a>
+      </li>
+      <li>
+        <a href="/logout">🚪 Logout</a>
+      </li>
+    </ul>
+  </div>
+
+</div>
+
+{% with messages = get_flashed_messages() %}
+  {% for msg in messages %}
+    <p style="color:red">{{ msg }}</p>
+  {% endfor %}
+{% endwith %}

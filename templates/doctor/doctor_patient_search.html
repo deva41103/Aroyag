@@ -1,0 +1,12 @@
+<h2>Search Patient</h2>
+
+<form method="post">
+  <input type="text" name="health_id" placeholder="Enter Health ID" required>
+  <button type="submit">Search</button>
+</form>
+
+{% with messages = get_flashed_messages() %}
+  {% for msg in messages %}
+    <p style="color:red">{{ msg }}</p>
+  {% endfor %}
+{% endwith %}
