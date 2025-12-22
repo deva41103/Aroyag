@@ -1,0 +1,13 @@
+<h2>Patient Consent Required</h2>
+<p>An OTP has been sent to the patient.</p>
+
+<form method="post">
+  <input type="text" name="otp" placeholder="Enter OTP" required>
+  <button type="submit">Verify OTP</button>
+</form>
+
+{% with messages = get_flashed_messages() %}
+  {% for msg in messages %}
+    <p style="color:red">{{ msg }}</p>
+  {% endfor %}
+{% endwith %}

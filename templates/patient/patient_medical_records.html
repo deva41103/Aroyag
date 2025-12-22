@@ -1,0 +1,97 @@
+<h2>My Medical Timeline</h2>
+<p>Your complete medical history (read-only)</p>
+
+<hr>
+
+<style>
+.timeline {
+  border-left: 3px solid #4f46e5;
+  margin-left: 20px;
+  padding-left: 20px;
+}
+
+.timeline-item {
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  left: -32px;
+  top: 5px;
+  width: 14px;
+  height: 14px;
+  background: #4f46e5;
+  border-radius: 50%;
+}
+
+.record-card {
+  background: #f9fafb;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.record-date {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.doctor-info {
+  font-size: 14px;
+  color: #374151;
+  margin-top: 4px;
+}
+</style>
+
+{% if records %}
+  <div class="timeline">
+    {% for r in records %}
+      <div class="timeline-item">
+        <div class="record-card">
+          <div class="record-date">
+            {{ r.created_at[:10] }}
+          </div>
+
+          <h3>{{ r.title }}</h3>
+
+          <div class="doctor-info">
+  👨‍⚕️
+  {% if r.users and r.users.doctor_profiles %}
+    Dr. {{ r.users.doctor_profiles.full_name }}
+    {% if r.users.doctor_profiles.specialization %}
+      ({{ r.users.doctor_profiles.specialization }})
+    {% endif %}
+  {% else %}
+    Doctor information not available
+  {% endif %}
+</div>
+
+
+          <p>{{ r.description }}</p>
+
+          <h4>Attachments</h4>
+          {% if r.medical_attachments %}
+            <ul>
+              {% for a in r.medical_attachments %}
+                <li>
+                  <a href="{{ a.file_url }}" target="_blank">
+                    {{ a.file_name }}
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p>No attachments</p>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <p>No medical records available.</p>
+{% endif %}
+
+<br>
+<a href="/patient/dashboard">⬅ Back to Dashboard</a>

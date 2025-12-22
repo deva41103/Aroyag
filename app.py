@@ -4,6 +4,7 @@ from routes.auth import auth_bp
 from routes.dashboard import dashboard_bp
 from routes.newborn import newborn_bp
 from routes.medical_records import medical_bp
+from routes.patient_records import patient_records_bp
 
 
 app = Flask(__name__)
@@ -15,6 +16,7 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(newborn_bp)
 app.register_blueprint(medical_bp)
+app.register_blueprint(patient_records_bp)
 
 if __name__ == "__main__":
     app.run(debug=True)

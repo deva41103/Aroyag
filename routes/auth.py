@@ -168,3 +168,11 @@ def verify_otp():
 
     # Fallback
     return redirect("/")
+
+@auth_bp.route("/logout")
+def logout():
+    # 🔐 Clear entire Flask session
+    session.clear()
+
+    # 🚀 Redirect to landing / login page
+    return redirect("/")

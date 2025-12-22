@@ -1,45 +1,133 @@
-from flask import Blueprint, render_template, request, redirect, session, flash
-from config import supabase
+import random
+from datetime import datetime, timedelta
+
+from flask import (
+    Blueprint, request, redirect,
+    flash, session, render_template
+)
+
+from config import supabase, twilio_client, TWILIO_PHONE
 
 medical_bp = Blueprint("medical", __name__)
 
-
-# ----------------------------------------
-# SEARCH PATIENT BY HEALTH ID
-# ----------------------------------------
-@medical_bp.route("/doctor/search-patient", methods=["GET", "POST"])
+# ------------------------------------------------
+# SEARCH PATIENT BY HEALTH ID → SEND OTP
+# ------------------------------------------------
+@medical_bp.route("/doctor/search-patient", methods=["POST"])
 def doctor_search_patient():
     if session.get("role") != "doctor":
         return redirect("/doctor/login")
 
+    health_id = request.form.get("health_id")
+
+    # 1️⃣ Find patient
+    res = (
+        supabase
+        .table("patient_profiles")
+        .select("user_id")
+        .eq("health_id", health_id)
+        .limit(1)
+        .execute()
+    )
+
+    if not res.data:
+        flash("Patient not found")
+        return redirect("/doctor/dashboard")
+
+    patient_id = res.data[0]["user_id"]
+
+    # 2️⃣ Get patient phone
+    phone_res = (
+        supabase
+        .table("users")
+        .select("phone")
+        .eq("id", patient_id)
+        .limit(1)
+        .execute()
+    )
+
+    if not phone_res.data or not phone_res.data[0]["phone"]:
+        flash("Patient phone number not available")
+        return redirect("/doctor/dashboard")
+
+    patient_phone = phone_res.data[0]["phone"]
+
+    # 3️⃣ Generate OTP
+    otp = str(random.randint(100000, 999999))
+
+    supabase.table("patient_access_otps").insert({
+        "patient_id": patient_id,
+        "doctor_id": session["user_id"],
+        "otp": otp,
+        "verified": False,
+        "expires_at": (datetime.utcnow() + timedelta(minutes=5)).isoformat()
+    }).execute()
+
+    # 4️⃣ Send OTP via Twilio
+    twilio_client.messages.create(
+        body=f"Aroyagm: Your OTP for doctor access is {otp}. Valid for 5 minutes.",
+        from_=TWILIO_PHONE,
+        to=patient_phone
+    )
+
+    flash("OTP sent to patient")
+    return redirect(f"/doctor/verify-otp/{patient_id}")
+
+
+# ------------------------------------------------
+# VERIFY OTP
+# ------------------------------------------------
+@medical_bp.route("/doctor/verify-otp/<patient_id>", methods=["GET", "POST"])
+def verify_patient_otp(patient_id):
+    if session.get("role") != "doctor":
+        return redirect("/doctor/login")
+
     if request.method == "POST":
-        health_id = request.form.get("health_id")
+        entered_otp = request.form.get("otp")
 
         res = (
             supabase
-            .table("patient_profiles")
-            .select("user_id, health_id")
-            .eq("health_id", health_id)
+            .table("patient_access_otps")
+            .select("id")
+            .eq("patient_id", patient_id)
+            .eq("doctor_id", session["user_id"])
+            .eq("otp", entered_otp)
+            .eq("verified", False)
+            .gt("expires_at", datetime.utcnow().isoformat())
+            .limit(1)
             .execute()
         )
 
         if not res.data:
-            flash("Patient not found")
-            return redirect("/doctor/search-patient")
+            flash("Invalid or expired OTP")
+            return redirect(request.url)
 
-        patient_id = res.data[0]["user_id"]
+        # mark OTP verified
+        supabase.table("patient_access_otps") \
+            .update({"verified": True}) \
+            .eq("id", res.data[0]["id"]) \
+            .execute()
+
+        # grant session access
+        session["verified_patient"] = patient_id
+
         return redirect(f"/doctor/patient/{patient_id}")
 
-    return render_template("doctor/doctor_patient_search.html")
+    return render_template("doctor/verify_otp.html")
 
 
-# ----------------------------------------
-# VIEW ALL MEDICAL RECORDS (ANY DOCTOR)
-# ----------------------------------------
+# ------------------------------------------------
+# VIEW PATIENT MEDICAL RECORDS (OTP PROTECTED)
+# ------------------------------------------------
 @medical_bp.route("/doctor/patient/<patient_id>")
 def doctor_view_patient_records(patient_id):
     if session.get("role") != "doctor":
         return redirect("/doctor/login")
+
+    # 🔐 OTP check
+    if session.get("verified_patient") != patient_id:
+        flash("Patient consent (OTP) required")
+        return redirect("/doctor/dashboard")
 
     records = (
         supabase
@@ -57,25 +145,29 @@ def doctor_view_patient_records(patient_id):
     )
 
 
-# ----------------------------------------
-# ADD MEDICAL RECORD
-# ----------------------------------------
+# ------------------------------------------------
+# ADD MEDICAL RECORD (OTP PROTECTED)
+# ------------------------------------------------
 @medical_bp.route("/doctor/patient/<patient_id>/add", methods=["GET", "POST"])
 def doctor_add_medical_record(patient_id):
     if session.get("role") != "doctor":
         return redirect("/doctor/login")
 
+    # 🔐 OTP check
+    if session.get("verified_patient") != patient_id:
+        flash("Patient consent (OTP) required")
+        return redirect("/doctor/dashboard")
+
     if request.method == "POST":
         title = request.form.get("title")
         description = request.form.get("description")
-        doctor_id = session["user_id"]
 
         record = (
             supabase
             .table("medical_records")
             .insert({
                 "patient_id": patient_id,
-                "doctor_id": doctor_id,
+                "doctor_id": session["user_id"],
                 "title": title,
                 "description": description
             })
@@ -95,13 +187,13 @@ def doctor_add_medical_record(patient_id):
                     {"content-type": file.content_type}
                 )
 
-                public_url = supabase.storage.from_("medical-files").get_public_url(path)
+                file_url = supabase.storage.from_("medical-files").get_public_url(path)
 
                 supabase.table("medical_attachments").insert({
                     "medical_record_id": record_id,
                     "file_name": file.filename,
                     "file_type": file.content_type,
-                    "file_url": public_url
+                    "file_url": file_url
                 }).execute()
 
         flash("Medical record added successfully")

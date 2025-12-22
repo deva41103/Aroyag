@@ -5,10 +5,13 @@
 
 <div style="max-width:600px">
 
-  <!-- SEARCH PATIENT -->
+  <!-- SEARCH PATIENT (OTP FLOW STARTS HERE) -->
   <div style="border:1px solid #ccc; padding:16px; margin-bottom:20px">
     <h3>🔍 Search Patient</h3>
-    <p>Find patient using Health ID to view or add medical records.</p>
+    <p>
+      Enter patient Health ID.  
+      An OTP will be sent to the patient for consent.
+    </p>
 
     <form method="post" action="/doctor/search-patient">
       <input
@@ -19,7 +22,9 @@
         style="width:100%; padding:8px; margin-bottom:10px"
       >
 
-      <button type="submit">Search Patient</button>
+      <button type="submit">
+        Send OTP & Request Access
+      </button>
     </form>
   </div>
 
@@ -28,9 +33,6 @@
     <h3>⚡ Quick Actions</h3>
 
     <ul style="line-height:2">
-      <li>
-        <a href="/doctor/search-patient">📁 View Patient Medical Records</a>
-      </li>
       <li>
         <a href="/doctor/profile">👤 View / Edit Profile</a>
       </li>
@@ -42,8 +44,12 @@
 
 </div>
 
+<!-- FLASH MESSAGES -->
 {% with messages = get_flashed_messages() %}
-  {% for msg in messages %}
-    <p style="color:red">{{ msg }}</p>
-  {% endfor %}
+  {% if messages %}
+    <hr>
+    {% for msg in messages %}
+      <p style="color:red">{{ msg }}</p>
+    {% endfor %}
+  {% endif %}
 {% endwith %}
