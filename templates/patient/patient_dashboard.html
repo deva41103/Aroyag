@@ -10,6 +10,14 @@
 <p>Welcome, {{ profile.name }}!</p>
 <p>Your Health ID: {{ profile.health_id }}</p>
 
+<h2>Patient Dashboard</h2>
+
+<p><b>Health ID:</b> {{ profile.health_id }}</p>
+
+<img src="{{ profile.qr_url }}" width="220">
+<p>Show this QR to the doctor</p>
+
+
 <a href="/patient/medical-records">
   📁 View My Medical Records
 </a>

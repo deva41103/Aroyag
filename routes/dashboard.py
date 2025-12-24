@@ -2,12 +2,13 @@ from datetime import datetime
 import random
 from flask import Blueprint, render_template, request, session, redirect
 from config import supabase
+from function.qr_generator import upload_patient_qr
 
 dashboard_bp = Blueprint("dashboard", __name__)
 
-# =====================================================
+# =========================
 # PATIENT DASHBOARD
-# =====================================================
+# =========================
 
 @dashboard_bp.route("/patient/dashboard")
 def patient_dashboard():
@@ -17,15 +18,17 @@ def patient_dashboard():
     profile = (
         supabase
         .table("patient_profiles")
-        .select("health_id, email, blood_group, city, state")
+        .select("health_id, email, blood_group, city, state, qr_url")
         .eq("user_id", session["user_id"])
-        .single()
         .execute()
     )
 
+    if not profile.data:
+        return redirect("/patient/create-profile")
+
     return render_template(
         "patient/patient_dashboard.html",
-        profile=profile.data
+        profile=profile.data[0]
     )
 
 
@@ -39,15 +42,17 @@ def patient_create_profile():
     existing = (
         supabase
         .table("patient_profiles")
-        .select("health_id")
+        .select("health_id, qr_url")
         .eq("user_id", user_id)
         .execute()
     )
 
-    if not existing.data or not existing.data[0]["health_id"]:
-        health_id = f"HL-{datetime.now().year}-{random.randint(100000, 999999)}"
-    else:
+    if existing.data:
         health_id = existing.data[0]["health_id"]
+        qr_url = existing.data[0]["qr_url"]
+    else:
+        health_id = f"HL-{datetime.now().year}-{random.randint(100000, 999999)}"
+        qr_url = upload_patient_qr(user_id)
 
     if request.method == "POST":
         supabase.table("patient_profiles").upsert({
@@ -57,7 +62,8 @@ def patient_create_profile():
             "city": request.form["city"],
             "state": request.form["state"],
             "completed": True,
-            "health_id": health_id
+            "health_id": health_id,
+            "qr_url": qr_url
         }).execute()
 
         return redirect("/patient/dashboard")

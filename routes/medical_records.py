@@ -1,12 +1,16 @@
 import random
 from datetime import datetime, timedelta
-
+from flask import Blueprint, render_template, request, session, redirect
+from config import supabase
+import random
 from flask import (
     Blueprint, request, redirect,
     flash, session, render_template
 )
 
 from config import supabase, twilio_client, TWILIO_PHONE
+from function.send_otp import send_patient_otp
+from routes import dashboard
 
 medical_bp = Blueprint("medical", __name__)
 
@@ -74,16 +78,16 @@ def doctor_search_patient():
     return redirect(f"/doctor/verify-otp/{patient_id}")
 
 
-# ------------------------------------------------
+# -------------------------------
 # VERIFY OTP
-# ------------------------------------------------
+# -------------------------------
 @medical_bp.route("/doctor/verify-otp/<patient_id>", methods=["GET", "POST"])
 def verify_patient_otp(patient_id):
     if session.get("role") != "doctor":
         return redirect("/doctor/login")
 
     if request.method == "POST":
-        entered_otp = request.form.get("otp")
+        otp = request.form.get("otp")
 
         res = (
             supabase
@@ -91,10 +95,9 @@ def verify_patient_otp(patient_id):
             .select("id")
             .eq("patient_id", patient_id)
             .eq("doctor_id", session["user_id"])
-            .eq("otp", entered_otp)
+            .eq("otp", otp)
             .eq("verified", False)
             .gt("expires_at", datetime.utcnow().isoformat())
-            .limit(1)
             .execute()
         )
 
@@ -102,15 +105,12 @@ def verify_patient_otp(patient_id):
             flash("Invalid or expired OTP")
             return redirect(request.url)
 
-        # mark OTP verified
         supabase.table("patient_access_otps") \
             .update({"verified": True}) \
             .eq("id", res.data[0]["id"]) \
             .execute()
 
-        # grant session access
         session["verified_patient"] = patient_id
-
         return redirect(f"/doctor/patient/{patient_id}")
 
     return render_template("doctor/verify_otp.html")
@@ -203,3 +203,22 @@ def doctor_add_medical_record(patient_id):
         "doctor/doctor_add_record.html",
         patient_id=patient_id
     )
+
+@medical_bp.route("/doctor/scan")
+def doctor_scan():
+    if session.get("role") != "doctor":
+        return redirect("/doctor/login")
+
+    return render_template("doctor/scan_qr.html")
+
+@medical_bp.route("/doctor/request-otp/<patient_id>")
+def doctor_request_otp(patient_id):
+    if session.get("role") != "doctor":
+        return redirect("/doctor/login")
+
+    if not send_patient_otp(patient_id, session["user_id"]):
+        flash("Patient phone number not available")
+        return redirect("/doctor/dashboard")
+
+    flash("OTP sent to patient")
+    return redirect(f"/doctor/verify-otp/{patient_id}")

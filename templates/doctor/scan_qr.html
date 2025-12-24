@@ -1,0 +1,16 @@
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+<h2>Scan Patient QR</h2>
+<div id="reader" style="width:300px"></div>
+
+<script>
+  function onScanSuccess(decodedText) {
+    window.location.href = "/doctor/request-otp/" + decodedText;
+  }
+
+  new Html5Qrcode("reader").start(
+    { facingMode: "environment" },
+    { fps: 10, qrbox: 250 },
+    onScanSuccess
+  );
+</script>

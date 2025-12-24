@@ -5,13 +5,19 @@
 
 <div style="max-width:600px">
 
-  <!-- SEARCH PATIENT (OTP FLOW STARTS HERE) -->
+  <!-- ===============================
+       ACCESS PATIENT RECORDS
+       =============================== -->
   <div style="border:1px solid #ccc; padding:16px; margin-bottom:20px">
-    <h3>🔍 Search Patient</h3>
+    <h3>🩺 Access Patient Records</h3>
+
     <p>
-      Enter patient Health ID.  
-      An OTP will be sent to the patient for consent.
+      You can access patient records in <b>two ways</b>.
+      In both cases, an OTP will be sent to the patient for consent.
     </p>
+
+    <!-- OPTION 1: ENTER HEALTH ID -->
+    <h4>🔍 Option 1: Enter Health ID</h4>
 
     <form method="post" action="/doctor/search-patient">
       <input
@@ -26,9 +32,23 @@
         Send OTP & Request Access
       </button>
     </form>
+
+    <hr>
+
+    <!-- OPTION 2: SCAN QR -->
+    <h4>📷 Option 2: Scan Patient QR</h4>
+    <p>Scan the QR code shown by the patient.</p>
+
+    <a href="/doctor/scan">
+      <button type="button">
+        Open QR Scanner
+      </button>
+    </a>
   </div>
 
-  <!-- QUICK ACTIONS -->
+  <!-- ===============================
+       QUICK ACTIONS
+       =============================== -->
   <div style="border:1px solid #ccc; padding:16px">
     <h3>⚡ Quick Actions</h3>
 
@@ -44,7 +64,9 @@
 
 </div>
 
-<!-- FLASH MESSAGES -->
+<!-- ===============================
+     FLASH MESSAGES
+     =============================== -->
 {% with messages = get_flashed_messages() %}
   {% if messages %}
     <hr>
