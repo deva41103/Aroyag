@@ -3,8 +3,12 @@
 <form method="POST">
   <input name="hospital_name" placeholder="Hospital Name" required><br><br>
   <input name="registration" placeholder="Registration Number" required><br><br>
-  <input name="city" placeholder="City" required><br><br>
-  <input name="state" placeholder="State" required><br><br>
+  <select name="hospital_id" required>
+  {% for h in hospitals %}
+    <option value="{{ h.id }}">{{ h.name }}</option>
+  {% endfor %}
+</select>
+
 
   <button type="submit">Submit for Verification</button>
 </form>

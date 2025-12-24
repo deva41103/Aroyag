@@ -5,7 +5,12 @@
   <input name="email" type="email" placeholder="Email" required><br><br>
   <input name="license" placeholder="Medical License Number" required><br><br>
   <input name="specialization" placeholder="Specialization" required><br><br>
-  <input name="hospital" placeholder="Hospital / Clinic" required><br><br>
+  <select name="hospital_id" required>
+  {% for h in hospitals %}
+    <option value="{{ h.id }}">{{ h.name }}</option>
+  {% endfor %}
+</select>
+
 
   <button type="submit">Submit for Verification</button>
 </form>

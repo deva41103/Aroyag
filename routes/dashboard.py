@@ -5,6 +5,10 @@ from config import supabase
 
 dashboard_bp = Blueprint("dashboard", __name__)
 
+# =====================================================
+# PATIENT DASHBOARD
+# =====================================================
+
 @dashboard_bp.route("/patient/dashboard")
 def patient_dashboard():
     if session.get("role") != "patient":
@@ -18,20 +22,20 @@ def patient_dashboard():
         .single()
         .execute()
     )
-    
+
     return render_template(
         "patient/patient_dashboard.html",
         profile=profile.data
     )
 
+
 @dashboard_bp.route("/patient/create-profile", methods=["GET", "POST"])
-def create_profile():
+def patient_create_profile():
     if session.get("role") != "patient":
         return redirect("/patient")
 
     user_id = session["user_id"]
 
-    # Fetch existing profile (if any)
     existing = (
         supabase
         .table("patient_profiles")
@@ -40,7 +44,6 @@ def create_profile():
         .execute()
     )
 
-    # Generate Health ID ONLY if not present
     if not existing.data or not existing.data[0]["health_id"]:
         health_id = f"HL-{datetime.now().year}-{random.randint(100000, 999999)}"
     else:
@@ -61,10 +64,24 @@ def create_profile():
 
     return render_template("patient/patient_create_profile.html")
 
+
+# =====================================================
+# DOCTOR PROFILE & DASHBOARD
+# =====================================================
+
 @dashboard_bp.route("/doctor/create-profile", methods=["GET", "POST"])
 def doctor_create_profile():
     if session.get("role") != "doctor":
         return redirect("/doctor")
+
+    # 🔽 Fetch hospital master list
+    hospitals = (
+        supabase
+        .table("hospitals")
+        .select("id, name")
+        .order("name")
+        .execute()
+    )
 
     if request.method == "POST":
         supabase.table("doctor_profiles").upsert({
@@ -73,20 +90,48 @@ def doctor_create_profile():
             "email": request.form["email"],
             "license_number": request.form["license"],
             "specialization": request.form["specialization"],
-            "hospital": request.form["hospital"],
+            "hospital_id": request.form["hospital_id"],
             "verified": False
         }).execute()
 
         return redirect("/doctor/pending-verification")
 
-    return render_template("doctor/doctor_create_profile.html")
+    return render_template(
+        "doctor/doctor_create_profile.html",
+        hospitals=hospitals.data
+    )
+
 
 @dashboard_bp.route("/doctor/dashboard")
 def doctor_dashboard():
     if session.get("role") != "doctor":
         return redirect("/doctor")
 
-    return render_template("doctor/doctor_dashboard.html")
+    # Get doctor's hospital
+    doctor = (
+        supabase
+        .table("doctor_profiles")
+        .select("hospital_id")
+        .eq("user_id", session["user_id"])
+        .single()
+        .execute()
+    )
+
+    hospital_id = doctor.data["hospital_id"]
+
+    # Doctors from same hospital
+    doctors = (
+        supabase
+        .table("doctor_profiles")
+        .select("full_name, specialization")
+        .eq("hospital_id", hospital_id)
+        .execute()
+    )
+
+    return render_template(
+        "doctor/doctor_dashboard.html",
+        doctors=doctors.data
+    )
 
 
 @dashboard_bp.route("/doctor/pending-verification")
@@ -94,31 +139,83 @@ def doctor_pending():
     return render_template("doctor/doctor_pending.html")
 
 
+# =====================================================
+# HOSPITAL PROFILE & DASHBOARD
+# =====================================================
+
 @dashboard_bp.route("/hospital/create-profile", methods=["GET", "POST"])
 def hospital_create_profile():
     if session.get("role") != "hospital":
         return redirect("/hospital")
 
+    # 🔽 Select hospital from master list
+    hospitals = (
+        supabase
+        .table("hospitals")
+        .select("id, name")
+        .order("name")
+        .execute()
+    )
+
     if request.method == "POST":
         supabase.table("hospital_profiles").upsert({
             "user_id": session["user_id"],
-            "hospital_name": request.form["hospital_name"],
+            "hospital_id": request.form["hospital_id"],
             "registration_number": request.form["registration"],
-            "city": request.form["city"],
-            "state": request.form["state"],
             "verified": False
         }).execute()
 
         return redirect("/hospital/pending-verification")
 
-    return render_template("hospital/hospital_create_profile.html")
+    return render_template(
+        "hospital/hospital_create_profile.html",
+        hospitals=hospitals.data
+    )
+
 
 @dashboard_bp.route("/hospital/dashboard")
 def hospital_dashboard():
     if session.get("role") != "hospital":
         return redirect("/hospital")
 
-    return render_template("hospital/hospital_dashboard.html")
+    # Get hospital_id of logged-in hospital staff
+    hospital_profile = (
+        supabase
+        .table("hospital_profiles")
+        .select("hospital_id")
+        .eq("user_id", session["user_id"])
+        .single()
+        .execute()
+    )
+
+    hospital_id = hospital_profile.data["hospital_id"]
+
+    # Fetch doctors of this hospital
+    doctors = (
+        supabase
+        .table("doctor_profiles")
+        .select("full_name, specialization, verified")
+        .eq("hospital_id", hospital_id)
+        .execute()
+    )
+
+    # Fetch newborns of this hospital
+    newborns = (
+        supabase
+        .table("newborns")
+        .select("baby_name, dob, gender, health_id, created_at")
+        .eq("hospital_id", hospital_id)
+        .order("created_at", desc=True)
+        .execute()
+    )
+
+    return render_template(
+        "hospital/hospital_dashboard.html",
+        doctors=doctors.data,
+        newborns=newborns.data
+    )
+
+
 
 @dashboard_bp.route("/hospital/pending-verification")
 def hospital_pending():

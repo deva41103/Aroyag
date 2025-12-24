@@ -1,5 +1,44 @@
 <h2>Hospital Dashboard</h2>
 
+<hr>
+
+<h3>Doctors</h3>
+<ul>
+  {% for d in doctors %}
+    <li>
+      {{ d.full_name }} – {{ d.specialization }}
+      {% if d.verified %}
+        ✅
+      {% else %}
+        ⏳
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>
+
+<hr>
+
+<h3>Newborn Records</h3>
+<table border="1" cellpadding="6">
+  <tr>
+    <th>Baby Name</th>
+    <th>DOB</th>
+    <th>Gender</th>
+    <th>Health ID</th>
+  </tr>
+
+  {% for n in newborns %}
+  <tr>
+    <td>{{ n.baby_name }}</td>
+    <td>{{ n.dob }}</td>
+    <td>{{ n.gender }}</td>
+    <td>{{ n.health_id }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<br>
+
 <a href="/hospital/newborn/register">
-  Register Newborn
+  ➕ Register Newborn
 </a>
