@@ -1,27 +1,67 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Patient Dashboard</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patient Dashboard – AROgyam</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
 
-<h1>Patient Dashboard</h1>
+<body class="bg-gray-100 min-h-screen">
 
-<p>Welcome, {{ profile.name }}!</p>
-<p>Your Health ID: {{ profile.health_id }}</p>
+  <!-- Header -->
+  <header class="bg-white shadow">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+      <h1 class="text-xl font-bold text-teal-700">Patient Dashboard</h1>
+      <a href="/logout" class="text-red-600 font-medium">Logout</a>
+    </div>
+  </header>
 
-<h2>Patient Dashboard</h2>
+  <!-- Content -->
+  <main class="max-w-7xl mx-auto p-4 space-y-6">
 
-<p><b>Health ID:</b> {{ profile.health_id }}</p>
+    <!-- Health ID + QR -->
+    <div class="bg-white rounded-xl shadow p-6 grid md:grid-cols-2 gap-6 items-center">
+      <div>
+        <p class="text-sm text-gray-500">Health ID</p>
+        <p class="text-2xl font-bold">{{ profile.health_id }}</p>
+        <p class="text-gray-600 mt-2">
+          Show this QR to doctors for secure access.
+        </p>
+      </div>
 
-<img src="{{ profile.qr_url }}" width="220">
-<p>Show this QR to the doctor</p>
+      <div class="text-center">
+        <img src="{{ profile.qr_url }}" alt="Patient QR" class="mx-auto w-48">
+      </div>
+    </div>
 
+    <!-- Info Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="bg-white p-4 rounded-xl shadow">
+        <p class="text-sm text-gray-500">Blood Group</p>
+        <p class="text-xl font-semibold">{{ profile.blood_group }}</p>
+      </div>
 
-<a href="/patient/medical-records">
-  📁 View My Medical Records
-</a>
-<a href="/logout">🚪 Logout</a>
+      <div class="bg-white p-4 rounded-xl shadow">
+        <p class="text-sm text-gray-500">City</p>
+        <p class="text-xl font-semibold">{{ profile.city }}</p>
+      </div>
+
+      <div class="bg-white p-4 rounded-xl shadow">
+        <p class="text-sm text-gray-500">State</p>
+        <p class="text-xl font-semibold">{{ profile.state }}</p>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="bg-white rounded-xl shadow p-6">
+      <a href="/patient/medical-records"
+         class="block w-full md:w-auto text-center bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-teal-700 transition">
+        📁 View Medical Records
+      </a>
+    </div>
+
+  </main>
 
 </body>
 </html>

@@ -1,16 +1,97 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>AROgyam</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AROgyam – Digital Health Ecosystem</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
 
-<h1>AROgyam</h1>
-<p>Digital Health Ecosystem</p>
+<body class="bg-gray-50 text-gray-800">
 
-<a href="/patient">Patient</a><br>
-<a href="/doctor">Doctor</a><br>
-<a href="/hospital">Hospital</a><br>
+  <!-- Navbar -->
+  <header class="bg-white shadow">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-teal-700">AROgyam</h1>
+      <a href="/patient" class="hidden sm:inline-block bg-teal-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-teal-700 transition">
+        Get Started
+      </a>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="max-w-7xl mx-auto px-4 py-16 text-center">
+    <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+      Digital Health Ecosystem
+    </h2>
+    <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+      AROgyam connects patients, doctors, and hospitals on a single secure digital platform for better healthcare management.
+    </p>
+  </section>
+
+  <!-- Role Selection -->
+  <section class="max-w-7xl mx-auto px-4 pb-20">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+      <!-- Patient Card -->
+      <a href="/patient"
+         class="bg-white rounded-2xl shadow hover:shadow-lg transition p-8 text-center border">
+        <div class="text-teal-600 text-4xl mb-4">🧑‍⚕️</div>
+        <h3 class="text-xl font-semibold mb-2">Patient</h3>
+        <p class="text-gray-600">
+          Access medical records, track treatments, and manage your health digitally.
+        </p>
+      </a>
+
+      <!-- Doctor Card -->
+      <a href="/doctor"
+         class="bg-white rounded-2xl shadow hover:shadow-lg transition p-8 text-center border">
+        <div class="text-blue-600 text-4xl mb-4">👨‍⚕️</div>
+        <h3 class="text-xl font-semibold mb-2">Doctor</h3>
+        <p class="text-gray-600">
+          View patients, manage records, and deliver better care efficiently.
+        </p>
+      </a>
+
+      <!-- Hospital Card -->
+      <a href="/hospital"
+         class="bg-white rounded-2xl shadow hover:shadow-lg transition p-8 text-center border">
+        <div class="text-indigo-600 text-4xl mb-4">🏥</div>
+        <h3 class="text-xl font-semibold mb-2">Hospital</h3>
+        <p class="text-gray-600">
+          Centralized hospital management for staff, patients, and data.
+        </p>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="bg-white border-t">
+    <div class="max-w-7xl mx-auto px-4 py-16 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+      <div>
+        <h4 class="font-semibold text-lg mb-2">Secure Records</h4>
+        <p class="text-gray-600">All medical data stored safely and accessed only by authorized users.</p>
+      </div>
+      <div>
+        <h4 class="font-semibold text-lg mb-2">Fast Access</h4>
+        <p class="text-gray-600">Instant access to health information anytime, anywhere.</p>
+      </div>
+      <div>
+        <h4 class="font-semibold text-lg mb-2">Hospital Ready</h4>
+        <p class="text-gray-600">Designed to scale from clinics to full hospitals.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-100 border-t">
+    <div class="max-w-7xl mx-auto px-4 py-6 text-center text-sm text-gray-500">
+      © 2025 AROgyam. All rights reserved.
+    </div>
+  </footer>
 
 </body>
 </html>

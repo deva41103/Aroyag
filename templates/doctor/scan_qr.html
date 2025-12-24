@@ -1,8 +1,57 @@
-<script src="https://unpkg.com/html5-qrcode"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scan Patient QR – AROgyam</title>
 
-<h2>Scan Patient QR</h2>
-<div id="reader" style="width:300px"></div>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
+  <!-- QR Scanner -->
+  <script src="https://unpkg.com/html5-qrcode"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+
+<!-- Header -->
+<header class="bg-white shadow">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold text-blue-700">
+      Scan Patient QR
+    </h1>
+    <a href="/doctor/dashboard" class="text-sm text-blue-600 font-medium">
+      ← Back to Dashboard
+    </a>
+  </div>
+</header>
+
+<!-- Content -->
+<main class="max-w-md mx-auto p-4">
+
+  <!-- Instructions -->
+  <div class="bg-white rounded-2xl shadow p-6 text-center mb-6">
+    <p class="text-gray-700 mb-2">
+      Ask the patient to show their Health QR code.
+    </p>
+    <p class="text-sm text-gray-500">
+      Scanning the QR will request OTP consent automatically.
+    </p>
+  </div>
+
+  <!-- QR Scanner -->
+  <div class="bg-white rounded-2xl shadow p-4 flex justify-center">
+    <div id="reader" class="w-72"></div>
+  </div>
+
+  <!-- Security Note -->
+  <div class="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm text-blue-800 text-center">
+    🔒 Patient consent is required before accessing medical records.
+  </div>
+
+</main>
+
+<!-- QR Logic -->
 <script>
   function onScanSuccess(decodedText) {
     window.location.href = "/doctor/request-otp/" + decodedText;
@@ -14,3 +63,6 @@
     onScanSuccess
   );
 </script>
+
+</body>
+</html>

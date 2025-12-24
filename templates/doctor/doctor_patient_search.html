@@ -1,12 +1,48 @@
-<h2>Search Patient</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search Patient – AROgyam</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
 
-<form method="post">
-  <input type="text" name="health_id" placeholder="Enter Health ID" required>
-  <button type="submit">Search</button>
-</form>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center px-4">
 
-{% with messages = get_flashed_messages() %}
-  {% for msg in messages %}
-    <p style="color:red">{{ msg }}</p>
-  {% endfor %}
-{% endwith %}
+  <div class="w-full max-w-md bg-white rounded-2xl shadow p-8">
+    <h2 class="text-2xl font-bold text-blue-700 text-center mb-2">
+      Search Patient
+    </h2>
+    <p class="text-center text-gray-600 mb-6">
+      Enter patient Health ID to request access
+    </p>
+
+    <form method="POST" class="space-y-4">
+      <input
+        type="text"
+        name="health_id"
+        placeholder="Patient Health ID"
+        required
+        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600"
+      >
+
+      <button
+        type="submit"
+        class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition">
+        Request OTP Consent
+      </button>
+    </form>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="mt-4 bg-red-50 border border-red-200 rounded-lg p-3">
+          {% for msg in messages %}
+            <p class="text-red-600 text-sm">{{ msg }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+  </div>
+
+</body>
+</html>

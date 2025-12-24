@@ -1,14 +1,50 @@
-<h2>Hospital Registration</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hospital Registration – AROgyam</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
 
-<form method="POST">
-  <input name="hospital_name" placeholder="Hospital Name" required><br><br>
-  <input name="registration" placeholder="Registration Number" required><br><br>
-  <select name="hospital_id" required>
-  {% for h in hospitals %}
-    <option value="{{ h.id }}">{{ h.name }}</option>
-  {% endfor %}
-</select>
+<body class="min-h-screen bg-gray-100 flex items-center justify-center px-4">
 
+  <div class="w-full max-w-lg bg-white rounded-2xl shadow p-8">
+    <h2 class="text-2xl font-bold text-indigo-700 text-center mb-2">
+      Hospital Registration
+    </h2>
+    <p class="text-center text-gray-600 mb-6">
+      Register your hospital to access the system
+    </p>
 
-  <button type="submit">Submit for Verification</button>
-</form>
+    <form method="POST" class="space-y-4">
+
+      <select
+        name="hospital_id"
+        required
+        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-600"
+      >
+        <option value="">Select Hospital</option>
+        {% for h in hospitals %}
+          <option value="{{ h.id }}">{{ h.name }}</option>
+        {% endfor %}
+      </select>
+
+      <input
+        name="registration"
+        placeholder="Hospital Registration Number"
+        required
+        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-600"
+      >
+
+      <button
+        type="submit"
+        class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition">
+        Submit for Verification
+      </button>
+
+    </form>
+  </div>
+
+</body>
+</html>

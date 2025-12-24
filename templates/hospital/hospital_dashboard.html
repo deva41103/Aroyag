@@ -1,44 +1,72 @@
-<h2>Hospital Dashboard</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hospital Dashboard – AROgyam</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
 
-<hr>
+<body class="bg-gray-100 min-h-screen">
 
-<h3>Doctors</h3>
-<ul>
-  {% for d in doctors %}
-    <li>
-      {{ d.full_name }} – {{ d.specialization }}
-      {% if d.verified %}
-        ✅
-      {% else %}
-        ⏳
-      {% endif %}
-    </li>
-  {% endfor %}
-</ul>
+<header class="bg-white shadow">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between">
+    <h1 class="text-xl font-bold text-indigo-700">Hospital Dashboard</h1>
+    <a href="/logout" class="text-red-600 font-medium">Logout</a>
+  </div>
+</header>
 
-<hr>
+<main class="max-w-7xl mx-auto p-4 space-y-6">
 
-<h3>Newborn Records</h3>
-<table border="1" cellpadding="6">
-  <tr>
-    <th>Baby Name</th>
-    <th>DOB</th>
-    <th>Gender</th>
-    <th>Health ID</th>
-  </tr>
+  <!-- Doctors -->
+  <div class="bg-white rounded-xl shadow p-6">
+    <h2 class="text-lg font-semibold mb-4">Doctors</h2>
+    <ul class="space-y-2">
+      {% for d in doctors %}
+      <li class="flex justify-between items-center border-b pb-2">
+        <span>{{ d.full_name }} – {{ d.specialization }}</span>
+        {% if d.verified %}
+          <span class="text-green-600 font-medium">Verified</span>
+        {% else %}
+          <span class="text-yellow-600 font-medium">Pending</span>
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
 
-  {% for n in newborns %}
-  <tr>
-    <td>{{ n.baby_name }}</td>
-    <td>{{ n.dob }}</td>
-    <td>{{ n.gender }}</td>
-    <td>{{ n.health_id }}</td>
-  </tr>
-  {% endfor %}
-</table>
+  <!-- Newborns -->
+  <div class="bg-white rounded-xl shadow p-6 overflow-x-auto">
+    <h2 class="text-lg font-semibold mb-4">Newborn Records</h2>
 
-<br>
+    <table class="w-full text-left border">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="p-2">Baby Name</th>
+          <th class="p-2">DOB</th>
+          <th class="p-2">Gender</th>
+          <th class="p-2">Health ID</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for n in newborns %}
+        <tr class="border-t">
+          <td class="p-2">{{ n.baby_name }}</td>
+          <td class="p-2">{{ n.dob }}</td>
+          <td class="p-2">{{ n.gender }}</td>
+          <td class="p-2">{{ n.health_id }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 
-<a href="/hospital/newborn/register">
-  ➕ Register Newborn
-</a>
+  <a href="/hospital/newborn/register"
+     class="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700">
+    ➕ Register Newborn
+  </a>
+
+</main>
+
+</body>
+</html>

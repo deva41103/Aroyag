@@ -1,97 +1,111 @@
-<h2>My Medical Timeline</h2>
-<p>Your complete medical history (read-only)</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medical Records – AROgyam</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
 
-<hr>
+<body class="bg-gray-100 min-h-screen">
 
-<style>
-.timeline {
-  border-left: 3px solid #4f46e5;
-  margin-left: 20px;
-  padding-left: 20px;
-}
+<!-- Header -->
+<header class="bg-white shadow">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold text-teal-700">My Medical Timeline</h1>
+    <a href="/patient/dashboard" class="text-sm text-teal-600 font-medium">
+      ← Back to Dashboard
+    </a>
+  </div>
+</header>
 
-.timeline-item {
-  margin-bottom: 30px;
-  position: relative;
-}
+<!-- Content -->
+<main class="max-w-4xl mx-auto p-4">
 
-.timeline-item::before {
-  content: "";
-  position: absolute;
-  left: -32px;
-  top: 5px;
-  width: 14px;
-  height: 14px;
-  background: #4f46e5;
-  border-radius: 50%;
-}
+  <p class="text-gray-600 mb-8">
+    Your complete medical history (read-only)
+  </p>
 
-.record-card {
-  background: #f9fafb;
-  padding: 15px;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-}
+  {% if records %}
 
-.record-date {
-  font-size: 12px;
-  color: #6b7280;
-}
+  <!-- Timeline -->
+  <div class="relative border-l-4 border-teal-600 pl-6 space-y-10">
 
-.doctor-info {
-  font-size: 14px;
-  color: #374151;
-  margin-top: 4px;
-}
-</style>
-
-{% if records %}
-  <div class="timeline">
     {% for r in records %}
-      <div class="timeline-item">
-        <div class="record-card">
-          <div class="record-date">
-            {{ r.created_at[:10] }}
-          </div>
+    <div class="relative">
 
-          <h3>{{ r.title }}</h3>
+      <!-- Timeline Dot -->
+      <span class="absolute -left-[14px] top-2 w-4 h-4 bg-teal-600 rounded-full"></span>
 
-          <div class="doctor-info">
-  👨‍⚕️
-  {% if r.users and r.users.doctor_profiles %}
-    Dr. {{ r.users.doctor_profiles.full_name }}
-    {% if r.users.doctor_profiles.specialization %}
-      ({{ r.users.doctor_profiles.specialization }})
-    {% endif %}
-  {% else %}
-    Doctor information not available
-  {% endif %}
-</div>
+      <!-- Record Card -->
+      <div class="bg-white rounded-xl shadow p-6">
 
+        <!-- Date -->
+        <p class="text-sm text-gray-500 mb-1">
+          {{ r.created_at[:10] }}
+        </p>
 
-          <p>{{ r.description }}</p>
+        <!-- Title -->
+        <h3 class="text-lg font-semibold text-gray-800">
+          {{ r.title }}
+        </h3>
 
-          <h4>Attachments</h4>
+        <!-- Doctor Info -->
+        <p class="text-sm text-gray-700 mt-1">
+          👨‍⚕️
+          {% if r.users and r.users.doctor_profiles %}
+            Dr. {{ r.users.doctor_profiles.full_name }}
+            {% if r.users.doctor_profiles.specialization %}
+              ({{ r.users.doctor_profiles.specialization }})
+            {% endif %}
+          {% else %}
+            Doctor information not available
+          {% endif %}
+        </p>
+
+        <!-- Description -->
+        <p class="text-gray-700 mt-4">
+          {{ r.description }}
+        </p>
+
+        <!-- Attachments -->
+        <div class="mt-4">
+          <h4 class="text-sm font-semibold text-gray-600 mb-2">
+            Attachments
+          </h4>
+
           {% if r.medical_attachments %}
-            <ul>
+            <ul class="space-y-2">
               {% for a in r.medical_attachments %}
                 <li>
-                  <a href="{{ a.file_url }}" target="_blank">
-                    {{ a.file_name }}
+                  <a
+                    href="{{ a.file_url }}"
+                    target="_blank"
+                    class="text-teal-600 hover:underline text-sm"
+                  >
+                    📎 {{ a.file_name }}
                   </a>
                 </li>
               {% endfor %}
             </ul>
           {% else %}
-            <p>No attachments</p>
+            <p class="text-sm text-gray-500">No attachments</p>
           {% endif %}
         </div>
-      </div>
-    {% endfor %}
-  </div>
-{% else %}
-  <p>No medical records available.</p>
-{% endif %}
 
-<br>
-<a href="/patient/dashboard">⬅ Back to Dashboard</a>
+      </div>
+    </div>
+    {% endfor %}
+
+  </div>
+
+  {% else %}
+    <div class="bg-white rounded-xl shadow p-6 text-center text-gray-600">
+      No medical records available.
+    </div>
+  {% endif %}
+
+</main>
+
+</body>
+</html>

@@ -1,33 +1,143 @@
-<h2>Newborn Registration</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Newborn Registration – AROgyam</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
 
-<form method="POST">
+<body class="bg-gray-100 min-h-screen">
 
-<h3>Baby Details</h3>
-<input name="baby_name" placeholder="Baby Name" required><br><br>
-<input type="date" name="dob" required><br><br>
+<!-- Header -->
+<header class="bg-white shadow">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold text-indigo-700">
+      Newborn Registration
+    </h1>
+    <a href="/hospital/dashboard" class="text-sm text-indigo-600 font-medium">
+      ← Back to Dashboard
+    </a>
+  </div>
+</header>
 
-<select name="gender" required>
-  <option value="">Gender</option>
-  <option>Male</option>
-  <option>Female</option>
-</select><br><br>
+<!-- Content -->
+<main class="max-w-4xl mx-auto p-4">
 
-<select name="blood_group" required>
-  <option value="">Blood Group</option>
-  <option>A+</option><option>A-</option>
-  <option>B+</option><option>B-</option>
-  <option>AB+</option><option>AB-</option>
-  <option>O+</option><option>O-</option>
-</select><br><br>
+  <div class="bg-white rounded-2xl shadow p-8">
 
-<h3>Parent Details</h3>
-<input name="mother_name" placeholder="Mother Name" required><br><br>
-<input name="father_name" placeholder="Father Name"><br><br>
-<input name="parent_phone" placeholder="Parent Phone" required><br><br>
+    <form method="POST" class="space-y-8">
 
-<h3>Location</h3>
-<input name="city" placeholder="City" required><br><br>
-<input name="state" placeholder="State" required><br><br>
+      <!-- Baby Details -->
+      <div>
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">
+          👶 Baby Details
+        </h2>
 
-<button type="submit">Register Newborn</button>
-</form>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input
+            name="baby_name"
+            placeholder="Baby Name"
+            required
+            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-600"
+          >
+
+          <input
+            type="date"
+            name="dob"
+            required
+            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-600"
+          >
+
+          <select
+            name="gender"
+            required
+            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-600"
+          >
+            <option value="">Select Gender</option>
+            <option>Male</option>
+            <option>Female</option>
+          </select>
+
+          <select
+            name="blood_group"
+            required
+            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-600"
+          >
+            <option value="">Select Blood Group</option>
+            <option>A+</option><option>A-</option>
+            <option>B+</option><option>B-</option>
+            <option>AB+</option><option>AB-</option>
+            <option>O+</option><option>O-</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Parent Details -->
+      <div>
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">
+          👨‍👩‍👧 Parent Details
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input
+            name="mother_name"
+            placeholder="Mother Name"
+            required
+            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-600"
+          >
+
+          <input
+            name="father_name"
+            placeholder="Father Name (optional)"
+            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-600"
+          >
+
+          <input
+            name="parent_phone"
+            placeholder="Parent Phone Number"
+            required
+            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-600 md:col-span-2"
+          >
+        </div>
+      </div>
+
+      <!-- Location -->
+      <div>
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">
+          📍 Location
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input
+            name="city"
+            placeholder="City"
+            required
+            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-600"
+          >
+
+          <input
+            name="state"
+            placeholder="State"
+            required
+            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-600"
+          >
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <button
+        type="submit"
+        class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition"
+      >
+        Register Newborn
+      </button>
+
+    </form>
+
+  </div>
+
+</main>
+
+</body>
+</html>

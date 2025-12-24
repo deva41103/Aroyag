@@ -1,77 +1,60 @@
-<h2>Doctor Dashboard</h2>
-<p>Welcome, Doctor.</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doctor Dashboard – AROgyam</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
 
-<hr>
+<body class="bg-gray-100 min-h-screen">
 
-<div style="max-width:600px">
+<header class="bg-white shadow">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between">
+    <h1 class="text-xl font-bold text-blue-700">Doctor Dashboard</h1>
+    <a href="/logout" class="text-red-600 font-medium">Logout</a>
+  </div>
+</header>
 
-  <!-- ===============================
-       ACCESS PATIENT RECORDS
-       =============================== -->
-  <div style="border:1px solid #ccc; padding:16px; margin-bottom:20px">
-    <h3>🩺 Access Patient Records</h3>
+<main class="max-w-5xl mx-auto p-4 space-y-6">
 
-    <p>
-      You can access patient records in <b>two ways</b>.
-      In both cases, an OTP will be sent to the patient for consent.
-    </p>
+  <!-- Access Patient -->
+  <div class="bg-white rounded-xl shadow p-6">
+    <h2 class="text-lg font-semibold mb-4">🩺 Access Patient Records</h2>
 
-    <!-- OPTION 1: ENTER HEALTH ID -->
-    <h4>🔍 Option 1: Enter Health ID</h4>
-
-    <form method="post" action="/doctor/search-patient">
+    <form method="post" action="/doctor/search-patient" class="space-y-4">
       <input
         type="text"
         name="health_id"
         placeholder="Enter Patient Health ID"
         required
-        style="width:100%; padding:8px; margin-bottom:10px"
+        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600"
       >
-
-      <button type="submit">
+      <button class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700">
         Send OTP & Request Access
       </button>
     </form>
 
-    <hr>
-
-    <!-- OPTION 2: SCAN QR -->
-    <h4>📷 Option 2: Scan Patient QR</h4>
-    <p>Scan the QR code shown by the patient.</p>
-
-    <a href="/doctor/scan">
-      <button type="button">
-        Open QR Scanner
-      </button>
-    </a>
+    <div class="text-center mt-6">
+      <a href="/doctor/scan"
+         class="inline-block bg-gray-100 px-6 py-3 rounded-lg font-medium hover:bg-gray-200">
+        📷 Scan Patient QR
+      </a>
+    </div>
   </div>
 
-  <!-- ===============================
-       QUICK ACTIONS
-       =============================== -->
-  <div style="border:1px solid #ccc; padding:16px">
-    <h3>⚡ Quick Actions</h3>
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+        {% for msg in messages %}
+          <p class="text-red-600">{{ msg }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
 
-    <ul style="line-height:2">
-      <li>
-        <a href="/doctor/profile">👤 View / Edit Profile</a>
-      </li>
-      <li>
-        <a href="/logout">🚪 Logout</a>
-      </li>
-    </ul>
-  </div>
+</main>
 
-</div>
-
-<!-- ===============================
-     FLASH MESSAGES
-     =============================== -->
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <hr>
-    {% for msg in messages %}
-      <p style="color:red">{{ msg }}</p>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
+</body>
+</html>

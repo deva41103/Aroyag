@@ -1,28 +1,68 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Create Patient Profile</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complete Profile – AROgyam</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
 
-<h2>Complete Your Profile</h2>
+<body class="min-h-screen bg-gray-100 flex items-center justify-center px-4">
 
-<form method="POST">
-    <input type="email" name="email" placeholder="Email" required><br><br>
+  <div class="w-full max-w-md bg-white rounded-2xl shadow p-8">
+    <h2 class="text-2xl font-bold text-teal-700 text-center mb-2">
+      Complete Your Profile
+    </h2>
+    <p class="text-center text-gray-600 mb-6">
+      This information helps doctors provide better care
+    </p>
 
-    <select name="blood_group" required>
+    <form method="POST" class="space-y-4">
+
+      <input
+        type="email"
+        name="email"
+        placeholder="Email Address"
+        required
+        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-600"
+      >
+
+      <select
+        name="blood_group"
+        required
+        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-600"
+      >
         <option value="">Select Blood Group</option>
         <option>A+</option><option>A-</option>
         <option>B+</option><option>B-</option>
         <option>AB+</option><option>AB-</option>
         <option>O+</option><option>O-</option>
-    </select><br><br>
+      </select>
 
-    <input type="text" name="city" placeholder="City" required><br><br>
-    <input type="text" name="state" placeholder="State" required><br><br>
+      <input
+        type="text"
+        name="city"
+        placeholder="City"
+        required
+        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-600"
+      >
 
-    <button type="submit">Save & Continue</button>
-</form>
+      <input
+        type="text"
+        name="state"
+        placeholder="State"
+        required
+        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-600"
+      >
+
+      <button
+        type="submit"
+        class="w-full bg-teal-600 text-white py-3 rounded-lg font-semibold hover:bg-teal-700 transition">
+        Save & Continue
+      </button>
+
+    </form>
+  </div>
 
 </body>
 </html>

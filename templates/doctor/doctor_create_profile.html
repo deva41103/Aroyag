@@ -1,16 +1,72 @@
-<h2>Doctor Registration</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doctor Registration – AROgyam</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
 
-<form method="POST">
-  <input name="full_name" placeholder="Full Name" required><br><br>
-  <input name="email" type="email" placeholder="Email" required><br><br>
-  <input name="license" placeholder="Medical License Number" required><br><br>
-  <input name="specialization" placeholder="Specialization" required><br><br>
-  <select name="hospital_id" required>
-  {% for h in hospitals %}
-    <option value="{{ h.id }}">{{ h.name }}</option>
-  {% endfor %}
-</select>
+<body class="min-h-screen bg-gray-100 flex items-center justify-center px-4">
 
+  <div class="w-full max-w-lg bg-white rounded-2xl shadow p-8">
+    <h2 class="text-2xl font-bold text-blue-700 text-center mb-2">
+      Doctor Registration
+    </h2>
+    <p class="text-center text-gray-600 mb-6">
+      Submit your details for hospital verification
+    </p>
 
-  <button type="submit">Submit for Verification</button>
-</form>
+    <form method="POST" class="space-y-4">
+
+      <input
+        name="full_name"
+        placeholder="Full Name"
+        required
+        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600"
+      >
+
+      <input
+        name="email"
+        type="email"
+        placeholder="Email Address"
+        required
+        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600"
+      >
+
+      <input
+        name="license"
+        placeholder="Medical License Number"
+        required
+        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600"
+      >
+
+      <input
+        name="specialization"
+        placeholder="Specialization"
+        required
+        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600"
+      >
+
+      <select
+        name="hospital_id"
+        required
+        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600"
+      >
+        <option value="">Select Hospital</option>
+        {% for h in hospitals %}
+          <option value="{{ h.id }}">{{ h.name }}</option>
+        {% endfor %}
+      </select>
+
+      <button
+        type="submit"
+        class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition">
+        Submit for Verification
+      </button>
+
+    </form>
+  </div>
+
+</body>
+</html>
