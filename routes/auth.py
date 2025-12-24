@@ -1,7 +1,14 @@
-from flask import Blueprint, render_template, request, redirect, session
+from flask import Blueprint, render_template, request, redirect, session, flash
 from config import supabase
 
-auth_bp = Blueprint("auth", __name__)
+# -------------------------------
+# Authentication Blueprint
+# -------------------------------
+auth_bp = Blueprint(
+    "auth",
+    __name__,
+    template_folder="templates"
+)
 
 # --------------------------------------------------
 # PATIENT LOGIN
@@ -9,12 +16,17 @@ auth_bp = Blueprint("auth", __name__)
 @auth_bp.route("/patient", methods=["GET", "POST"])
 def patient_login():
     if request.method == "POST":
-        phone = request.form["phone"]
+        phone = request.form.get("phone")
+
+        if not phone:
+            flash("Phone number is required")
+            return redirect("/patient")
 
         supabase.auth.sign_in_with_otp({
             "phone": phone
         })
 
+        session.clear()
         session["phone"] = phone
         session["login_role"] = "patient"
 
@@ -29,12 +41,17 @@ def patient_login():
 @auth_bp.route("/doctor", methods=["GET", "POST"])
 def doctor_login():
     if request.method == "POST":
-        phone = request.form["phone"]
+        phone = request.form.get("phone")
+
+        if not phone:
+            flash("Phone number is required")
+            return redirect("/doctor")
 
         supabase.auth.sign_in_with_otp({
             "phone": phone
         })
 
+        session.clear()
         session["phone"] = phone
         session["login_role"] = "doctor"
 
@@ -42,18 +59,24 @@ def doctor_login():
 
     return render_template("doctor/doctor_login.html", otp_sent=False)
 
+
 # --------------------------------------------------
 # HOSPITAL LOGIN
 # --------------------------------------------------
 @auth_bp.route("/hospital", methods=["GET", "POST"])
 def hospital_login():
     if request.method == "POST":
-        phone = request.form["phone"]
+        phone = request.form.get("phone")
+
+        if not phone:
+            flash("Phone number is required")
+            return redirect("/hospital")
 
         supabase.auth.sign_in_with_otp({
             "phone": phone
         })
 
+        session.clear()
         session["phone"] = phone
         session["login_role"] = "hospital"
 
@@ -67,30 +90,34 @@ def hospital_login():
 # --------------------------------------------------
 @auth_bp.route("/verify-otp", methods=["POST"])
 def verify_otp():
-    otp = request.form["otp"]
+    otp = request.form.get("otp")
     phone = session.get("phone")
-    login_role = session.get("login_role")  # patient / doctor
+    login_role = session.get("login_role")
 
-    if not phone or not login_role:
+    if not otp or not phone or not login_role:
+        flash("Invalid session or OTP")
         return redirect("/")
 
-    # Verify OTP with Supabase
-    auth_res = supabase.auth.verify_otp({
-        "phone": phone,
-        "token": otp,
-        "type": "sms"
-    })
+    try:
+        auth_res = supabase.auth.verify_otp({
+            "phone": phone,
+            "token": otp,
+            "type": "sms"
+        })
+    except Exception:
+        flash("Invalid or expired OTP")
+        return redirect("/")
 
     user = auth_res.user
     user_id = user.id
 
     # --------------------------------------------------
-    # USERS TABLE (ROLE BASE)
+    # USERS TABLE (ROLE BASED)
     # --------------------------------------------------
     existing_user = (
         supabase
         .table("users")
-        .select("*")
+        .select("id")
         .eq("id", user_id)
         .execute()
     )
@@ -112,15 +139,12 @@ def verify_otp():
         profile = (
             supabase
             .table("patient_profiles")
-            .select("*")
+            .select("completed")
             .eq("user_id", user_id)
             .execute()
         )
 
-        if not profile.data:
-            return redirect("/patient/create-profile")
-
-        if not profile.data[0]["completed"]:
+        if not profile.data or not profile.data[0].get("completed"):
             return redirect("/patient/create-profile")
 
         return redirect("/patient/dashboard")
@@ -132,7 +156,7 @@ def verify_otp():
         profile = (
             supabase
             .table("doctor_profiles")
-            .select("*")
+            .select("verified")
             .eq("user_id", user_id)
             .execute()
         )
@@ -140,11 +164,11 @@ def verify_otp():
         if not profile.data:
             return redirect("/doctor/create-profile")
 
-        if not profile.data[0]["verified"]:
+        if not profile.data[0].get("verified"):
             return redirect("/doctor/pending-verification")
 
         return redirect("/doctor/dashboard")
-    
+
     # --------------------------------------------------
     # HOSPITAL FLOW
     # --------------------------------------------------
@@ -152,7 +176,7 @@ def verify_otp():
         profile = (
             supabase
             .table("hospital_profiles")
-            .select("*")
+            .select("verified")
             .eq("user_id", user_id)
             .execute()
         )
@@ -160,19 +184,18 @@ def verify_otp():
         if not profile.data:
             return redirect("/hospital/create-profile")
 
-        if not profile.data[0]["verified"]:
+        if not profile.data[0].get("verified"):
             return redirect("/hospital/pending-verification")
 
         return redirect("/hospital/dashboard")
 
-
-    # Fallback
     return redirect("/")
 
-@auth_bp.route("/logout")
-def logout():
-    # 🔐 Clear entire Flask session
-    session.clear()
 
-    # 🚀 Redirect to landing / login page
+# --------------------------------------------------
+# LOGOUT
+# --------------------------------------------------
+@auth_bp.route("/logout", methods=["GET"])
+def logout():
+    session.clear()
     return redirect("/")

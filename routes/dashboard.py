@@ -4,15 +4,22 @@ from flask import Blueprint, render_template, request, session, redirect
 from config import supabase
 from function.qr_generator import upload_patient_qr
 
-dashboard_bp = Blueprint("dashboard", __name__)
+# -------------------------------
+# Dashboard Blueprint
+# -------------------------------
+dashboard_bp = Blueprint(
+    "dashboard",
+    __name__,
+    template_folder="templates"
+)
 
 # =========================
 # PATIENT DASHBOARD
 # =========================
 
-@dashboard_bp.route("/patient/dashboard")
+@dashboard_bp.route("/patient/dashboard", methods=["GET"])
 def patient_dashboard():
-    if session.get("role") != "patient":
+    if session.get("role") != "patient" or not session.get("user_id"):
         return redirect("/patient")
 
     profile = (
@@ -34,7 +41,7 @@ def patient_dashboard():
 
 @dashboard_bp.route("/patient/create-profile", methods=["GET", "POST"])
 def patient_create_profile():
-    if session.get("role") != "patient":
+    if session.get("role") != "patient" or not session.get("user_id"):
         return redirect("/patient")
 
     user_id = session["user_id"]
@@ -57,10 +64,10 @@ def patient_create_profile():
     if request.method == "POST":
         supabase.table("patient_profiles").upsert({
             "user_id": user_id,
-            "email": request.form["email"],
-            "blood_group": request.form["blood_group"],
-            "city": request.form["city"],
-            "state": request.form["state"],
+            "email": request.form.get("email"),
+            "blood_group": request.form.get("blood_group"),
+            "city": request.form.get("city"),
+            "state": request.form.get("state"),
             "completed": True,
             "health_id": health_id,
             "qr_url": qr_url
@@ -77,10 +84,9 @@ def patient_create_profile():
 
 @dashboard_bp.route("/doctor/create-profile", methods=["GET", "POST"])
 def doctor_create_profile():
-    if session.get("role") != "doctor":
+    if session.get("role") != "doctor" or not session.get("user_id"):
         return redirect("/doctor")
 
-    # 🔽 Fetch hospital master list
     hospitals = (
         supabase
         .table("hospitals")
@@ -92,11 +98,11 @@ def doctor_create_profile():
     if request.method == "POST":
         supabase.table("doctor_profiles").upsert({
             "user_id": session["user_id"],
-            "full_name": request.form["full_name"],
-            "email": request.form["email"],
-            "license_number": request.form["license"],
-            "specialization": request.form["specialization"],
-            "hospital_id": request.form["hospital_id"],
+            "full_name": request.form.get("full_name"),
+            "email": request.form.get("email"),
+            "license_number": request.form.get("license"),
+            "specialization": request.form.get("specialization"),
+            "hospital_id": request.form.get("hospital_id"),
             "verified": False
         }).execute()
 
@@ -108,24 +114,24 @@ def doctor_create_profile():
     )
 
 
-@dashboard_bp.route("/doctor/dashboard")
+@dashboard_bp.route("/doctor/dashboard", methods=["GET"])
 def doctor_dashboard():
-    if session.get("role") != "doctor":
+    if session.get("role") != "doctor" or not session.get("user_id"):
         return redirect("/doctor")
 
-    # Get doctor's hospital
-    doctor = (
+    doctor_profile = (
         supabase
         .table("doctor_profiles")
         .select("hospital_id")
         .eq("user_id", session["user_id"])
-        .single()
         .execute()
     )
 
-    hospital_id = doctor.data["hospital_id"]
+    if not doctor_profile.data:
+        return redirect("/doctor/create-profile")
 
-    # Doctors from same hospital
+    hospital_id = doctor_profile.data[0]["hospital_id"]
+
     doctors = (
         supabase
         .table("doctor_profiles")
@@ -140,7 +146,7 @@ def doctor_dashboard():
     )
 
 
-@dashboard_bp.route("/doctor/pending-verification")
+@dashboard_bp.route("/doctor/pending-verification", methods=["GET"])
 def doctor_pending():
     return render_template("doctor/doctor_pending.html")
 
@@ -151,10 +157,9 @@ def doctor_pending():
 
 @dashboard_bp.route("/hospital/create-profile", methods=["GET", "POST"])
 def hospital_create_profile():
-    if session.get("role") != "hospital":
+    if session.get("role") != "hospital" or not session.get("user_id"):
         return redirect("/hospital")
 
-    # 🔽 Select hospital from master list
     hospitals = (
         supabase
         .table("hospitals")
@@ -166,8 +171,8 @@ def hospital_create_profile():
     if request.method == "POST":
         supabase.table("hospital_profiles").upsert({
             "user_id": session["user_id"],
-            "hospital_id": request.form["hospital_id"],
-            "registration_number": request.form["registration"],
+            "hospital_id": request.form.get("hospital_id"),
+            "registration_number": request.form.get("registration"),
             "verified": False
         }).execute()
 
@@ -179,24 +184,24 @@ def hospital_create_profile():
     )
 
 
-@dashboard_bp.route("/hospital/dashboard")
+@dashboard_bp.route("/hospital/dashboard", methods=["GET"])
 def hospital_dashboard():
-    if session.get("role") != "hospital":
+    if session.get("role") != "hospital" or not session.get("user_id"):
         return redirect("/hospital")
 
-    # Get hospital_id of logged-in hospital staff
     hospital_profile = (
         supabase
         .table("hospital_profiles")
         .select("hospital_id")
         .eq("user_id", session["user_id"])
-        .single()
         .execute()
     )
 
-    hospital_id = hospital_profile.data["hospital_id"]
+    if not hospital_profile.data:
+        return redirect("/hospital/create-profile")
 
-    # Fetch doctors of this hospital
+    hospital_id = hospital_profile.data[0]["hospital_id"]
+
     doctors = (
         supabase
         .table("doctor_profiles")
@@ -205,7 +210,6 @@ def hospital_dashboard():
         .execute()
     )
 
-    # Fetch newborns of this hospital
     newborns = (
         supabase
         .table("newborns")
@@ -222,7 +226,6 @@ def hospital_dashboard():
     )
 
 
-
-@dashboard_bp.route("/hospital/pending-verification")
+@dashboard_bp.route("/hospital/pending-verification", methods=["GET"])
 def hospital_pending():
     return render_template("hospital/hospital_pending.html")
