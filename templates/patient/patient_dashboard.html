@@ -2,66 +2,206 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Patient Dashboard – AROgyam</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="bg-gray-100 min-h-screen">
 
-  <!-- Header -->
-  <header class="bg-white shadow">
-    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-      <h1 class="text-xl font-bold text-teal-700">Patient Dashboard</h1>
-      <a href="/logout" class="text-red-600 font-medium">Logout</a>
+<!-- HEADER -->
+<header class="bg-white shadow">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold text-teal-700">Patient Dashboard</h1>
+    <a href="/logout" class="text-red-600 font-medium">Logout</a>
+  </div>
+</header>
+
+<main class="max-w-7xl mx-auto p-4 space-y-8">
+
+  <!-- HEALTH ID + QR -->
+  <div class="bg-white rounded-2xl shadow p-6 grid md:grid-cols-2 gap-6 items-center">
+    <div>
+      <p class="text-sm text-gray-500">Health ID</p>
+      <p class="text-2xl font-bold text-teal-700">{{ profile.health_id }}</p>
+      <p class="text-gray-600 mt-2">
+        Show this QR code to doctors for secure access to your records.
+      </p>
     </div>
-  </header>
 
-  <!-- Content -->
-  <main class="max-w-7xl mx-auto p-4 space-y-6">
+    <div class="text-center">
+      {% if profile.qr_url %}
+        <img src="{{ profile.qr_url }}" alt="Patient QR" class="mx-auto w-48">
+      {% else %}
+        <p class="text-gray-500">QR not generated</p>
+      {% endif %}
+    </div>
+  </div>
 
-    <!-- Health ID + QR -->
-    <div class="bg-white rounded-xl shadow p-6 grid md:grid-cols-2 gap-6 items-center">
+  <!-- BASIC INFO -->
+  <div class="bg-white rounded-2xl shadow p-6">
+    <h2 class="text-lg font-semibold text-teal-700 mb-4">Personal Information</h2>
+
+    <div class="grid md:grid-cols-3 gap-4">
       <div>
-        <p class="text-sm text-gray-500">Health ID</p>
-        <p class="text-2xl font-bold">{{ profile.health_id }}</p>
-        <p class="text-gray-600 mt-2">
-          Show this QR to doctors for secure access.
+        <p class="label">Full Name</p>
+        <p class="value">{{ profile.full_name }}</p>
+      </div>
+
+      <div>
+        <p class="label">Gender</p>
+        <p class="value">{{ profile.gender }}</p>
+      </div>
+
+      <div>
+        <p class="label">Date of Birth</p>
+        <p class="value">{{ profile.dob }}</p>
+      </div>
+
+      <div>
+        <p class="label">Blood Group</p>
+        <p class="value">{{ profile.blood_group or "—" }}</p>
+      </div>
+
+      <div>
+        <p class="label">Email</p>
+        <p class="value">{{ profile.email }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADDRESS -->
+  <div class="bg-white rounded-2xl shadow p-6">
+    <h2 class="text-lg font-semibold text-teal-700 mb-4">Address</h2>
+
+    <div class="grid md:grid-cols-3 gap-4">
+      <div>
+        <p class="label">City</p>
+        <p class="value">{{ profile.city }}</p>
+      </div>
+
+      <div>
+        <p class="label">State</p>
+        <p class="value">{{ profile.state }}</p>
+      </div>
+
+      <div>
+        <p class="label">Pincode</p>
+        <p class="value">{{ profile.pincode }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MEDICAL INFO -->
+  <div class="bg-white rounded-2xl shadow p-6">
+    <h2 class="text-lg font-semibold text-teal-700 mb-4">Medical Information</h2>
+
+    <div class="space-y-3">
+      <p><span class="label">Allergies:</span> {{ profile.allergies or "None" }}</p>
+      <p><span class="label">Medical Conditions:</span> {{ profile.medical_conditions or "None" }}</p>
+      <p><span class="label">Disabilities:</span> {{ profile.disabilities or "None" }}</p>
+    </div>
+  </div>
+
+  <!-- EMERGENCY CONTACT -->
+  <div class="bg-white rounded-2xl shadow p-6">
+    <h2 class="text-lg font-semibold text-teal-700 mb-4">Emergency Contact</h2>
+
+    {% if profile.emergency_contact %}
+      <div class="grid md:grid-cols-3 gap-4">
+        <div>
+          <p class="label">Name</p>
+          <p class="value">{{ profile.emergency_contact.name }}</p>
+        </div>
+        <div>
+          <p class="label">Relation</p>
+          <p class="value">{{ profile.emergency_contact.relation }}</p>
+        </div>
+        <div>
+          <p class="label">Phone</p>
+          <p class="value">{{ profile.emergency_contact.phone }}</p>
+        </div>
+      </div>
+    {% else %}
+      <p class="text-gray-500">No emergency contact added</p>
+    {% endif %}
+  </div>
+
+  <!-- DOCUMENTS -->
+<div class="bg-white rounded-2xl shadow p-6">
+  <h2 class="text-lg font-semibold text-teal-700 mb-4">Documents</h2>
+
+  <div class="space-y-4">
+
+    <!-- Aadhaar -->
+    <div class="flex justify-between items-center">
+      <div>
+        <p class="font-medium">🪪 Aadhaar</p>
+        <p class="text-sm text-gray-500">
+          {{ profile.aadhaar_number or "Not provided" }}
         </p>
       </div>
 
-      <div class="text-center">
-        <img src="{{ profile.qr_url }}" alt="Patient QR" class="mx-auto w-48">
-      </div>
+      {% if profile.aadhaar_signed_url %}
+        <a href="{{ profile.aadhaar_signed_url }}"
+           target="_blank"
+           class="text-teal-600 font-semibold hover:underline">
+          View
+        </a>
+      {% else %}
+        <span class="text-gray-400">Not uploaded</span>
+      {% endif %}
     </div>
 
-    <!-- Info Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div class="bg-white p-4 rounded-xl shadow">
-        <p class="text-sm text-gray-500">Blood Group</p>
-        <p class="text-xl font-semibold">{{ profile.blood_group }}</p>
+    <!-- Insurance -->
+    <div class="flex justify-between items-center">
+      <div>
+        <p class="font-medium">🛡️ Medical Insurance</p>
+        <p class="text-sm text-gray-500">
+          Insurance document
+        </p>
       </div>
 
-      <div class="bg-white p-4 rounded-xl shadow">
-        <p class="text-sm text-gray-500">City</p>
-        <p class="text-xl font-semibold">{{ profile.city }}</p>
-      </div>
-
-      <div class="bg-white p-4 rounded-xl shadow">
-        <p class="text-sm text-gray-500">State</p>
-        <p class="text-xl font-semibold">{{ profile.state }}</p>
-      </div>
+      {% if profile.insurance_signed_url %}
+        <a href="{{ profile.insurance_signed_url }}"
+           target="_blank"
+           class="text-teal-600 font-semibold hover:underline">
+          View
+        </a>
+      {% else %}
+        <span class="text-gray-400">Not uploaded</span>
+      {% endif %}
     </div>
 
-    <!-- Actions -->
-    <div class="bg-white rounded-xl shadow p-6">
-      <a href="/patient/medical-records"
-         class="block w-full md:w-auto text-center bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-teal-700 transition">
-        📁 View Medical Records
-      </a>
-    </div>
+  </div>
 
-  </main>
+  <p class="text-xs text-gray-500 mt-4">
+    🔒 Documents are securely accessible for a limited time only.
+  </p>
+</div>
+
+
+  <!-- ACTIONS -->
+  <div class="bg-white rounded-2xl shadow p-6">
+    <a href="/patient/medical-records"
+       class="block w-full md:w-auto text-center bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-teal-700 transition">
+      📁 View Medical Records
+    </a>
+  </div>
+
+</main>
+
+<style>
+.label {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+.value {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #111827;
+}
+</style>
 
 </body>
 </html>
