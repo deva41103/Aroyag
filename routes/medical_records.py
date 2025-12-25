@@ -236,7 +236,7 @@ def doctor_scan():
 # ------------------------------------------------
 # REQUEST OTP VIA QR
 # ------------------------------------------------
-@medical_bp.route("/doctor/request-otp/<patient_id>", methods=["GET"])
+@medical_bp.route("/doctor/request-otp/<patient_id>", methods=["POST"])
 def doctor_request_otp(patient_id):
     if session.get("role") != "doctor" or not session.get("user_id"):
         return redirect("/doctor")
