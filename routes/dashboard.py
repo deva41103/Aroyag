@@ -161,6 +161,30 @@ def doctor_create_profile():
     if session.get("role") != "doctor" or not session.get("user_id"):
         return redirect("/doctor")
 
+    user_id = session["user_id"]
+
+    # -------------------------------------------------
+    # 1️⃣ Fetch existing profile (resume support)
+    # -------------------------------------------------
+    existing = (
+        supabase
+        .table("doctor_profiles")
+        .select("current_step, completed, verified")
+        .eq("user_id", user_id)
+        .execute()
+    )
+
+    if existing.data:
+        current_step = existing.data[0].get("current_step", 0) or 0
+        verified = existing.data[0].get("verified", False)
+    else:
+        current_step = 0
+        verified = False
+
+    # 🚫 HARD BLOCK: verified doctors should NOT see create-profile again
+    if verified:
+        return redirect("/doctor/dashboard")
+
     hospitals = (
         supabase
         .table("hospitals")
@@ -169,21 +193,82 @@ def doctor_create_profile():
         .execute()
     )
 
+    # -------------------------------------------------
+    # 2️⃣ Handle POST
+    # -------------------------------------------------
     if request.method == "POST":
+        is_final = request.form.get("is_final") == "true"
+
+        def upload(bucket, file, folder):
+            if not file:
+                return None
+            path = f"{user_id}/{folder}/{file.filename}"
+            supabase.storage.from_(bucket).upload(
+                path,
+                file.read(),
+                file_options={"content-type": file.content_type}
+            )
+            return path
+
+        medical_cert = upload(
+            "doctor-documents",
+            request.files.get("medical_cert"),
+            "medical"
+        )
+        degree_cert = upload(
+            "doctor-documents",
+            request.files.get("degree_cert"),
+            "degree"
+        )
+        govt_id = upload(
+            "doctor-documents",
+            request.files.get("govt_id"),
+            "govt"
+        )
+
         supabase.table("doctor_profiles").upsert({
-            "user_id": session["user_id"],
+            "user_id": user_id,
+
+            # 🧍 Basic info
             "full_name": request.form.get("full_name"),
             "email": request.form.get("email"),
-            "license_number": request.form.get("license"),
+            "gender": request.form.get("gender"),
+            "date_of_birth": request.form.get("dob"),
+
+            # 🩺 Professional
+            "license_number": request.form.get("license_number"),
+            "issuing_authority": request.form.get("issuing_authority"),
             "specialization": request.form.get("specialization"),
+            "years_of_experience": request.form.get("experience"),
             "hospital_id": request.form.get("hospital_id"),
-            "verified": False
+
+            # 📄 Documents
+            "medical_certificate": medical_cert,
+            "degree_certificate": degree_cert,
+            "government_id": govt_id,
+
+            # 🧭 State
+            "completed": is_final,
+            "current_step": int(request.form.get("current_step", 0)),
+
+            # 🔐 Verification flags (IMPORTANT)
+            "verified": False,
+            "consent_verification": True if is_final else False,
+            "consent_terms": True if is_final else False
         }).execute()
 
-        return redirect("/doctor/pending-verification")
+        # 🔥 CRITICAL REDIRECT LOGIC
+        if is_final:
+            return redirect("/doctor/pending-verification")
+        else:
+            return redirect("/doctor/create-profile")
 
+    # -------------------------------------------------
+    # 3️⃣ Render form
+    # -------------------------------------------------
     return render_template(
         "doctor/doctor_create_profile.html",
+        current_step=current_step,
         hospitals=hospitals.data
     )
 
@@ -193,36 +278,92 @@ def doctor_dashboard():
     if session.get("role") != "doctor" or not session.get("user_id"):
         return redirect("/doctor")
 
-    doctor_profile = (
+    user_id = session["user_id"]
+
+    # -------------------------------------------------
+    # Fetch doctor profile (MUST EXIST)
+    # -------------------------------------------------
+    res = (
         supabase
         .table("doctor_profiles")
-        .select("hospital_id")
-        .eq("user_id", session["user_id"])
+        .select("""
+            full_name,
+            email,
+            gender,
+            date_of_birth,
+            license_number,
+            issuing_authority,
+            specialization,
+            years_of_experience,
+            hospital_id,
+            verified,
+            medical_certificate,
+            degree_certificate,
+            government_id,
+            created_at
+        """)
+        .eq("user_id", user_id)
+        .single()
         .execute()
     )
 
-    if not doctor_profile.data:
+    if not res.data:
         return redirect("/doctor/create-profile")
 
-    hospital_id = doctor_profile.data[0]["hospital_id"]
+    doctor = res.data
 
-    doctors = (
-        supabase
-        .table("doctor_profiles")
-        .select("full_name, specialization")
-        .eq("hospital_id", hospital_id)
-        .execute()
-    )
+    # -------------------------------------------------
+    # HARD VERIFICATION BLOCK
+    # -------------------------------------------------
+    if not doctor["verified"]:
+        return redirect("/doctor/pending-verification")
+
+    # -------------------------------------------------
+    # Fetch hospital name
+    # -------------------------------------------------
+    hospital = None
+    if doctor["hospital_id"]:
+        hospital_res = (
+            supabase
+            .table("hospitals")
+            .select("name")
+            .eq("id", doctor["hospital_id"])
+            .single()
+            .execute()
+        )
+        hospital = hospital_res.data["name"] if hospital_res.data else None
+
+    # -------------------------------------------------
+    # Signed URLs for documents
+    # -------------------------------------------------
+    def signed_url(path):
+        if not path:
+            return None
+        res = supabase.storage.from_("doctor-documents") \
+            .create_signed_url(path, 300)
+        return res["signedURL"]
+
+    documents = {
+        "medical_certificate": signed_url(doctor["medical_certificate"]),
+        "degree_certificate": signed_url(doctor["degree_certificate"]),
+        "government_id": signed_url(doctor["government_id"]),
+    }
 
     return render_template(
         "doctor/doctor_dashboard.html",
-        doctors=doctors.data
+        doctor=doctor,
+        hospital=hospital,
+        documents=documents
     )
 
 
-@dashboard_bp.route("/doctor/pending-verification", methods=["GET"])
-def doctor_pending():
-    return render_template("doctor/doctor_pending.html")
+
+@dashboard_bp.route("/doctor/pending-verification")
+def doctor_pending_verification():
+    if session.get("role") != "doctor":
+        return redirect("/doctor")
+
+    return render_template("doctor/pending_verification.html")
 
 
 # =====================================================

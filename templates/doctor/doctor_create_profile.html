@@ -1,72 +1,233 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Doctor Registration – AROgyam</title>
+  <meta charset="UTF-8" />
+  <title>Complete Doctor Profile – AROGYAM</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="min-h-screen bg-gray-100 flex items-center justify-center px-4">
+<body class="bg-gray-100 min-h-screen">
 
-  <div class="w-full max-w-lg bg-white rounded-2xl shadow p-8">
-    <h2 class="text-2xl font-bold text-blue-700 text-center mb-2">
-      Doctor Registration
-    </h2>
-    <p class="text-center text-gray-600 mb-6">
-      Submit your details for hospital verification
-    </p>
+<form method="POST" enctype="multipart/form-data"
+      class="max-w-2xl mx-auto bg-white min-h-screen p-6 pb-28">
 
-    <form method="POST" class="space-y-4">
-
-      <input
-        name="full_name"
-        placeholder="Full Name"
-        required
-        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600"
-      >
-
-      <input
-        name="email"
-        type="email"
-        placeholder="Email Address"
-        required
-        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600"
-      >
-
-      <input
-        name="license"
-        placeholder="Medical License Number"
-        required
-        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600"
-      >
-
-      <input
-        name="specialization"
-        placeholder="Specialization"
-        required
-        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600"
-      >
-
-      <select
-        name="hospital_id"
-        required
-        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600"
-      >
-        <option value="">Select Hospital</option>
-        {% for h in hospitals %}
-          <option value="{{ h.id }}">{{ h.name }}</option>
-        {% endfor %}
-      </select>
-
-      <button
-        type="submit"
-        class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition">
-        Submit for Verification
-      </button>
-
-    </form>
+  <!-- PROGRESS BAR -->
+  <div class="w-full bg-gray-200 rounded-full h-2 mb-6">
+    <div id="progressBar"
+      class="bg-teal-600 h-2 rounded-full transition-all duration-500"
+      style="width: 0%"></div>
   </div>
+
+  <!-- STEP 1 : BASIC INFO -->
+  <div class="step">
+    <h2 class="title">Basic Information</h2>
+
+    <input name="full_name" required placeholder="Full Name" class="input" />
+    <input type="email" name="email" required placeholder="Email" class="input" />
+    <input type="date" name="dob" required class="input" />
+
+    <select name="gender" required class="input">
+      <option value="">Select Gender</option>
+      <option>Male</option>
+      <option>Female</option>
+      <option>Other</option>
+    </select>
+  </div>
+
+  <!-- STEP 2 : PROFESSIONAL DETAILS -->
+  <div class="step hidden">
+    <h2 class="title">Professional Details</h2>
+
+    <input name="license_number" required placeholder="Medical License Number" class="input" />
+
+    <select name="issuing_authority" required class="input">
+      <option value="">Issuing Authority</option>
+      <option>Medical Council of India</option>
+      <option>State Medical Council</option>
+      <option>National Medical Commission</option>
+    </select>
+
+    <select name="specialization" required class="input">
+      <option value="">Specialization</option>
+      <option>General Medicine</option>
+      <option>Cardiology</option>
+      <option>Orthopedics</option>
+      <option>Pediatrics</option>
+      <option>Gynecology</option>
+      <option>Neurology</option>
+      <option>Dermatology</option>
+      <option>Surgery</option>
+    </select>
+
+    <input name="experience" type="number"
+           required placeholder="Years of Experience"
+           class="input" />
+
+    <select name="hospital_id" required class="input">
+      <option value="">Select Hospital / Clinic</option>
+      {% for h in hospitals %}
+        <option value="{{ h.id }}">{{ h.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <!-- STEP 3 : DOCUMENTS -->
+  <div class="step hidden">
+    <h2 class="title">Documents</h2>
+
+    <label class="text-sm text-gray-600">Medical Registration Certificate</label>
+    <input type="file" name="medical_cert" required class="input" />
+
+    <label class="text-sm text-gray-600">Degree Certificate</label>
+    <input type="file" name="degree_cert" required class="input" />
+
+    <label class="text-sm text-gray-600">Government ID (Aadhaar / PAN / Passport)</label>
+    <input type="file" name="govt_id" required class="input" />
+  </div>
+
+  <!-- STEP 4 : CONSENT -->
+  <div class="step hidden">
+    <h2 class="title">Consent & Agreement</h2>
+
+    <label class="check">
+      <input type="checkbox" required />
+      I consent to verification of my credentials by AROGYAM admin team
+    </label>
+
+    <label class="check">
+      <input type="checkbox" required />
+      I accept the Privacy Policy & Terms of Service
+    </label>
+
+    <div class="bg-yellow-50 border border-yellow-300 rounded-lg p-3 text-sm text-yellow-800 mt-3">
+      Your profile will be reviewed within 2–3 business days.
+    </div>
+  </div>
+
+  <!-- HIDDEN FLAGS -->
+  <input type="hidden" name="current_step" id="currentStepInput"
+         value="{{ current_step|default(0) }}">
+  <input type="hidden" name="is_final" id="isFinal" value="false">
+
+  <!-- STICKY BOTTOM BAR -->
+  <div class="fixed bottom-0 left-0 right-0 bg-white border-t p-4 flex justify-between gap-2">
+    <button type="button" onclick="prevStep()" id="prevBtn"
+      class="btn-secondary hidden">Back</button>
+
+    <button type="button" onclick="saveDraft()" class="btn-secondary">
+      Save Draft
+    </button>
+
+    <button type="button" onclick="nextStep()" id="nextBtn"
+      class="btn-primary">
+      Next
+    </button>
+
+    <button type="submit" onclick="finalSubmit()" id="submitBtn"
+      class="btn-primary hidden">
+      Submit
+    </button>
+  </div>
+
+</form>
+
+<!-- STYLES -->
+<style>
+.input {
+  width: 100%;
+  padding: .75rem;
+  border: 1px solid #d1d5db;
+  border-radius: .5rem;
+  margin-bottom: .75rem;
+}
+.title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #0f766e;
+  margin-bottom: 1rem;
+}
+.check {
+  display: flex;
+  gap: .5rem;
+  margin-bottom: .75rem;
+}
+.btn-primary {
+  background: #0f766e;
+  color: white;
+  padding: .6rem 1.2rem;
+  border-radius: .5rem;
+}
+.btn-secondary {
+  border: 1px solid #d1d5db;
+  padding: .6rem 1.2rem;
+  border-radius: .5rem;
+}
+</style>
+
+<!-- SCRIPT (SAME AS PATIENT) -->
+<script>
+const steps = document.querySelectorAll(".step");
+const progress = document.getElementById("progressBar");
+const currentStepInput = document.getElementById("currentStepInput");
+
+let step = parseInt(currentStepInput.value || "0");
+
+function showStep() {
+  steps.forEach((s, i) => {
+    s.classList.toggle("hidden", i !== step);
+  });
+
+  progress.style.width = ((step + 1) / steps.length) * 100 + "%";
+
+  document.getElementById("prevBtn").classList.toggle("hidden", step === 0);
+  document.getElementById("nextBtn").classList.toggle("hidden", step === steps.length - 1);
+  document.getElementById("submitBtn").classList.toggle("hidden", step !== steps.length - 1);
+
+  currentStepInput.value = step;
+}
+
+function validateStep() {
+  const requiredFields = steps[step].querySelectorAll(
+    "input[required], select[required], textarea[required]"
+  );
+
+  for (let field of requiredFields) {
+    if (!field.value.trim()) {
+      field.focus();
+      alert("Please fill all required fields");
+      return false;
+    }
+  }
+  return true;
+}
+
+function nextStep() {
+  if (!validateStep()) return;
+  if (step < steps.length - 1) {
+    step++;
+    showStep();
+  }
+}
+
+function prevStep() {
+  if (step > 0) {
+    step--;
+    showStep();
+  }
+}
+
+function saveDraft() {
+  document.getElementById("isFinal").value = "false";
+  document.forms[0].submit();
+}
+
+function finalSubmit() {
+  document.getElementById("isFinal").value = "true";
+}
+
+showStep();
+</script>
 
 </body>
 </html>

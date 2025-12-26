@@ -2,35 +2,75 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <title>Doctor Dashboard – AROGYAM</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Doctor Dashboard – AROgyam</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="bg-gray-100 min-h-screen">
 
+<!-- HEADER -->
 <header class="bg-white shadow">
-  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between">
-    <h1 class="text-xl font-bold text-blue-700">Doctor Dashboard</h1>
+  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold text-teal-700">Doctor Dashboard</h1>
     <a href="/logout" class="text-red-600 font-medium">Logout</a>
   </div>
 </header>
 
 <main class="max-w-5xl mx-auto p-4 space-y-6">
 
-  <!-- Access Patient -->
+  <!-- PROFILE CARD -->
+  <div class="bg-white rounded-xl shadow p-6">
+    <h2 class="text-lg font-semibold mb-4">👨‍⚕️ My Profile</h2>
+
+    <div class="grid grid-cols-2 gap-4 text-sm">
+      <p><strong>Name:</strong> {{ doctor.full_name }}</p>
+      <p><strong>Email:</strong> {{ doctor.email }}</p>
+      <p><strong>Gender:</strong> {{ doctor.gender }}</p>
+      <p><strong>DOB:</strong> {{ doctor.date_of_birth }}</p>
+      <p><strong>Specialization:</strong> {{ doctor.specialization }}</p>
+      <p><strong>Experience:</strong> {{ doctor.years_of_experience }} years</p>
+      <p><strong>License No:</strong> {{ doctor.license_number }}</p>
+      <p><strong>Issuing Authority:</strong> {{ doctor.issuing_authority }}</p>
+      <p><strong>Hospital:</strong> {{ hospital or "—" }}</p>
+      <p><strong>Status:</strong>
+        <span class="text-green-600 font-semibold">Verified</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- DOCUMENTS -->
+  <div class="bg-white rounded-xl shadow p-6">
+    <h2 class="text-lg font-semibold mb-4">📄 My Documents</h2>
+
+    <div class="grid gap-4">
+      {% if documents.medical_certificate %}
+        <a href="{{ documents.medical_certificate }}" target="_blank"
+           class="doc-link">Medical Registration Certificate</a>
+      {% endif %}
+
+      {% if documents.degree_certificate %}
+        <a href="{{ documents.degree_certificate }}" target="_blank"
+           class="doc-link">Degree Certificate</a>
+      {% endif %}
+
+      {% if documents.government_id %}
+        <a href="{{ documents.government_id }}" target="_blank"
+           class="doc-link">Government ID</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- ACCESS PATIENT -->
   <div class="bg-white rounded-xl shadow p-6">
     <h2 class="text-lg font-semibold mb-4">🩺 Access Patient Records</h2>
 
     <form method="post" action="/doctor/search-patient" class="space-y-4">
-      <input
-        type="text"
-        name="health_id"
-        placeholder="Enter Patient Health ID"
-        required
-        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600"
-      >
-      <button class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700">
+      <input type="text" name="health_id" required
+             placeholder="Enter Patient Health ID"
+             class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-600">
+
+      <button class="w-full bg-teal-600 text-white py-3 rounded-lg font-semibold hover:bg-teal-700">
         Send OTP & Request Access
       </button>
     </form>
@@ -43,18 +83,20 @@
     </div>
   </div>
 
-  <!-- Flash Messages -->
-  {% with messages = get_flashed_messages() %}
-    {% if messages %}
-      <div class="bg-red-50 border border-red-200 rounded-lg p-4">
-        {% for msg in messages %}
-          <p class="text-red-600">{{ msg }}</p>
-        {% endfor %}
-      </div>
-    {% endif %}
-  {% endwith %}
-
 </main>
+
+<style>
+.doc-link {
+  display: block;
+  padding: .75rem;
+  border-radius: .5rem;
+  background: #f1f5f9;
+  font-weight: 500;
+}
+.doc-link:hover {
+  background: #e2e8f0;
+}
+</style>
 
 </body>
 </html>
