@@ -78,11 +78,21 @@ def doctor_search_patient():
     }).execute()
 
     # 4️⃣ Send OTP via Twilio
-    twilio_client.messages.create(
-        body=f"Aroyagm: Your OTP for doctor access is {otp}. Valid for 5 minutes.",
-        from_=TWILIO_PHONE,
-        to=patient_phone
-    )
+    try:
+        twilio_client.messages.create(
+            body=f"Aroyagm: Your OTP for doctor access is {otp}. Valid for 5 minutes.",
+            from_=TWILIO_PHONE,
+            to=patient_phone
+        )
+    except Exception as e:
+        # DEV MODE fallback
+        print("===================================")
+        print("🚧 DEVELOPMENT MODE")
+        print(f"📞 Patient Phone: {patient_phone}")
+        print(f"🔐 OTP: {otp}")
+        print("⏱ Valid for 5 minutes")
+        print("===================================")
+
 
     flash("OTP sent to patient")
     return redirect(f"/doctor/verify-otp/{patient_id}")
@@ -143,6 +153,29 @@ def doctor_view_patient_records(patient_id):
         flash("Patient consent (OTP) required")
         return redirect("/doctor/dashboard")
 
+    # 🧑 Fetch patient details
+    patient = (
+        supabase
+        .table("patient_profiles")
+        .select("""
+            full_name,
+            health_id,
+            dob,
+            gender,
+            blood_group,
+            city,
+            state,
+            pincode,
+            allergies,
+            medical_conditions,
+            emergency_contact
+        """)
+        .eq("user_id", patient_id)
+        .single()
+        .execute()
+    )
+
+    # 📁 Fetch medical records
     records = (
         supabase
         .table("medical_records")
@@ -154,9 +187,11 @@ def doctor_view_patient_records(patient_id):
 
     return render_template(
         "doctor/doctor_patient_records.html",
+        patient=patient.data,
         records=records.data,
         patient_id=patient_id
     )
+
 
 
 # ------------------------------------------------
