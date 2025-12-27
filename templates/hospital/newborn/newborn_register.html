@@ -12,9 +12,7 @@
 <!-- Header -->
 <header class="bg-white shadow">
   <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-    <h1 class="text-xl font-bold text-indigo-700">
-      Newborn Registration
-    </h1>
+    <h1 class="text-xl font-bold text-indigo-700">Newborn Registration</h1>
     <a href="/hospital/dashboard" class="text-sm text-indigo-600 font-medium">
       ← Back to Dashboard
     </a>
@@ -23,121 +21,161 @@
 
 <!-- Content -->
 <main class="max-w-4xl mx-auto p-4">
-
   <div class="bg-white rounded-2xl shadow p-8">
 
-    <form method="POST" class="space-y-8">
+    <form method="POST" enctype="multipart/form-data" class="space-y-10">
 
-      <!-- Baby Details -->
-      <div>
-        <h2 class="text-lg font-semibold text-gray-800 mb-4">
-          👶 Baby Details
-        </h2>
+      <!-- 👶 Baby Details -->
+      <section>
+        <h2 class="text-lg font-semibold mb-4">👶 Baby Details</h2>
+        <div class="grid md:grid-cols-2 gap-4">
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input
-            name="baby_name"
-            placeholder="Baby Name"
-            required
-            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-600"
-          >
+          <input name="baby_name" required placeholder="Baby Name / Baby of Mother"
+            class="input">
 
-          <input
-            type="date"
-            name="dob"
-            required
-            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-600"
-          >
+          <input type="date" name="dob" required class="input">
 
-          <select
-            name="gender"
-            required
-            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-600"
-          >
+          <input type="time" name="time_of_birth" class="input">
+
+          <select name="gender" required class="input">
             <option value="">Select Gender</option>
             <option>Male</option>
             <option>Female</option>
           </select>
 
-          <select
-            name="blood_group"
-            required
-            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-600"
-          >
+          <input name="birth_weight" placeholder="Birth Weight (kg)" class="input">
+          <input name="birth_height" placeholder="Birth Height (cm)" class="input">
+
+          <select name="blood_group" required class="input md:col-span-2">
             <option value="">Select Blood Group</option>
             <option>A+</option><option>A-</option>
             <option>B+</option><option>B-</option>
             <option>AB+</option><option>AB-</option>
             <option>O+</option><option>O-</option>
           </select>
+
         </div>
-      </div>
+      </section>
 
-      <!-- Parent Details -->
-      <div>
-        <h2 class="text-lg font-semibold text-gray-800 mb-4">
-          👨‍👩‍👧 Parent Details
-        </h2>
+      <!-- 👨‍👩‍👧 Parent Details -->
+      <section>
+        <h2 class="text-lg font-semibold mb-4">👨‍👩‍👧 Parent / Guardian</h2>
+        <div class="grid md:grid-cols-2 gap-4">
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input
-            name="mother_name"
-            placeholder="Mother Name"
-            required
-            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-600"
-          >
+          <input name="mother_name" required placeholder="Mother's Full Name" class="input">
+          <input name="father_name" placeholder="Father / Guardian Name" class="input">
 
-          <input
-            name="father_name"
-            placeholder="Father Name (optional)"
-            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-600"
-          >
+          <input name="parent_phone" required placeholder="Phone Number" class="input">
+          <input name="email" placeholder="Email (optional)" class="input">
 
-          <input
-            name="parent_phone"
-            placeholder="Parent Phone Number"
-            required
-            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-600 md:col-span-2"
-          >
+          <textarea name="address" placeholder="Complete Address"
+            class="input md:col-span-2 h-24"></textarea>
+
         </div>
-      </div>
+      </section>
 
-      <!-- Location -->
-      <div>
-        <h2 class="text-lg font-semibold text-gray-800 mb-4">
-          📍 Location
-        </h2>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input
-            name="city"
-            placeholder="City"
-            required
-            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-600"
-          >
-
-          <input
-            name="state"
-            placeholder="State"
-            required
-            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-600"
-          >
+      <!-- 📍 Location -->
+      <section>
+        <h2 class="text-lg font-semibold mb-4">📍 Location</h2>
+        <div class="grid md:grid-cols-2 gap-4">
+          <input name="city" required placeholder="City" class="input">
+          <input name="state" placeholder="State" class="input">
         </div>
-      </div>
+      </section>
 
-      <!-- Submit -->
-      <button
-        type="submit"
-        class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition"
-      >
+      <!-- 🏥 Medical Information -->
+      <section>
+        <h2 class="text-lg font-semibold mb-4">🏥 Medical Information</h2>
+
+        <div class="space-y-4">
+
+          <div>
+            <label class="font-medium">Term</label><br>
+            <label><input type="radio" name="term" value="Preterm"> Preterm</label>
+            <label class="ml-4"><input type="radio" name="term" value="Full-term"> Full-term</label>
+          </div>
+
+          <div>
+            <label class="font-medium">Delivery Type</label><br>
+            <label><input type="radio" name="delivery_type" value="Normal"> Normal</label>
+            <label class="ml-4"><input type="radio" name="delivery_type" value="Assisted"> Assisted</label>
+            <label class="ml-4"><input type="radio" name="delivery_type" value="C-Section"> C-Section</label>
+          </div>
+
+          <div>
+            <label class="font-medium">Birth Complications</label><br>
+            <label><input type="radio" name="birth_complications" value="yes"> Yes</label>
+            <label class="ml-4"><input type="radio" name="birth_complications" value="no"> No</label>
+          </div>
+
+          <input name="apgar_score" placeholder="APGAR Score (0–10)" class="input">
+
+          <div>
+            <label class="font-medium">Vaccinations at Birth</label><br>
+            <label><input type="checkbox" name="vaccinations" value="BCG"> BCG</label>
+            <label class="ml-4"><input type="checkbox" name="vaccinations" value="Polio"> Polio</label>
+            <label class="ml-4"><input type="checkbox" name="vaccinations" value="Hepatitis B"> Hepatitis B</label>
+          </div>
+
+          <textarea name="neonatal_conditions"
+            placeholder="Known Neonatal Conditions (if any)"
+            class="input h-24"></textarea>
+
+        </div>
+      </section>
+
+      <!-- 🆔 ID Verification & Documents -->
+      <section>
+        <h2 class="text-lg font-semibold mb-4">🆔 ID Verification & Documents</h2>
+
+        <div class="grid md:grid-cols-2 gap-4">
+
+          <input name="mother_aadhaar" placeholder="Mother Aadhaar Number" class="input">
+          <input name="mother_health_id" placeholder="Mother Health ID (optional)" class="input">
+
+          <div>
+            <label class="text-sm">Mother Aadhaar Card</label>
+            <input type="file" name="mother_aadhaar_file" class="input">
+          </div>
+
+          <div>
+            <label class="text-sm">AROGYAM ID (optional)</label>
+            <input type="file" name="arogyam_id_file" class="input">
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="text-sm">Hospital Discharge Summary</label>
+            <input type="file" name="discharge_summary_file" class="input">
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ✅ Submit -->
+      <button type="submit"
+        class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition">
         Register Newborn
       </button>
 
     </form>
 
   </div>
-
 </main>
+
+<!-- Tailwind Input Style -->
+<style>
+  .input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    outline: none;
+  }
+  .input:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99,102,241,.2);
+  }
+</style>
 
 </body>
 </html>

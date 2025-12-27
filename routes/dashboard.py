@@ -428,7 +428,7 @@ def hospital_dashboard():
     newborns = (
         supabase
         .table("newborns")
-        .select("baby_name, dob, gender, health_id, created_at")
+        .select("baby_name, dob, gender, baby_health_id, created_at")
         .eq("hospital_id", hospital_id)
         .order("created_at", desc=True)
         .execute()
