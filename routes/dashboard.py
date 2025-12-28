@@ -444,3 +444,28 @@ def hospital_dashboard():
 @dashboard_bp.route("/hospital/pending-verification", methods=["GET"])
 def hospital_pending():
     return render_template("hospital/hospital_pending.html")
+
+
+@dashboard_bp.route("/patient/check-otp", methods=["GET"])
+def patient_check_otp():
+    if session.get("role") != "patient" or not session.get("user_id"):
+        return {"otp": None}
+
+    patient_id = session["user_id"]
+
+    res = (
+        supabase
+        .table("patient_access_otps")
+        .select("otp")
+        .eq("patient_id", patient_id)
+        .eq("verified", False)
+        .gt("expires_at", datetime.utcnow().isoformat())
+        .order("created_at", desc=True)
+        .limit(1)
+        .execute()
+    )
+
+    if res.data:
+        return {"otp": res.data[0]["otp"]}
+
+    return {"otp": None}

@@ -41,62 +41,29 @@
   <!-- BASIC INFO -->
   <div class="bg-white rounded-2xl shadow p-6">
     <h2 class="text-lg font-semibold text-teal-700 mb-4">Personal Information</h2>
-
     <div class="grid md:grid-cols-3 gap-4">
-      <div>
-        <p class="label">Full Name</p>
-        <p class="value">{{ profile.full_name }}</p>
-      </div>
-
-      <div>
-        <p class="label">Gender</p>
-        <p class="value">{{ profile.gender }}</p>
-      </div>
-
-      <div>
-        <p class="label">Date of Birth</p>
-        <p class="value">{{ profile.dob }}</p>
-      </div>
-
-      <div>
-        <p class="label">Blood Group</p>
-        <p class="value">{{ profile.blood_group or "—" }}</p>
-      </div>
-
-      <div>
-        <p class="label">Email</p>
-        <p class="value">{{ profile.email }}</p>
-      </div>
+      <div><p class="label">Full Name</p><p class="value">{{ profile.full_name }}</p></div>
+      <div><p class="label">Gender</p><p class="value">{{ profile.gender }}</p></div>
+      <div><p class="label">Date of Birth</p><p class="value">{{ profile.dob }}</p></div>
+      <div><p class="label">Blood Group</p><p class="value">{{ profile.blood_group or "—" }}</p></div>
+      <div><p class="label">Email</p><p class="value">{{ profile.email }}</p></div>
     </div>
   </div>
 
   <!-- ADDRESS -->
   <div class="bg-white rounded-2xl shadow p-6">
     <h2 class="text-lg font-semibold text-teal-700 mb-4">Address</h2>
-
     <div class="grid md:grid-cols-3 gap-4">
-      <div>
-        <p class="label">City</p>
-        <p class="value">{{ profile.city }}</p>
-      </div>
-
-      <div>
-        <p class="label">State</p>
-        <p class="value">{{ profile.state }}</p>
-      </div>
-
-      <div>
-        <p class="label">Pincode</p>
-        <p class="value">{{ profile.pincode }}</p>
-      </div>
+      <div><p class="label">City</p><p class="value">{{ profile.city }}</p></div>
+      <div><p class="label">State</p><p class="value">{{ profile.state }}</p></div>
+      <div><p class="label">Pincode</p><p class="value">{{ profile.pincode }}</p></div>
     </div>
   </div>
 
   <!-- MEDICAL INFO -->
   <div class="bg-white rounded-2xl shadow p-6">
     <h2 class="text-lg font-semibold text-teal-700 mb-4">Medical Information</h2>
-
-    <div class="space-y-3">
+    <div class="space-y-2">
       <p><span class="label">Allergies:</span> {{ profile.allergies or "None" }}</p>
       <p><span class="label">Medical Conditions:</span> {{ profile.medical_conditions or "None" }}</p>
       <p><span class="label">Disabilities:</span> {{ profile.disabilities or "None" }}</p>
@@ -106,100 +73,123 @@
   <!-- EMERGENCY CONTACT -->
   <div class="bg-white rounded-2xl shadow p-6">
     <h2 class="text-lg font-semibold text-teal-700 mb-4">Emergency Contact</h2>
-
     {% if profile.emergency_contact %}
-      <div class="grid md:grid-cols-3 gap-4">
-        <div>
-          <p class="label">Name</p>
-          <p class="value">{{ profile.emergency_contact.name }}</p>
-        </div>
-        <div>
-          <p class="label">Relation</p>
-          <p class="value">{{ profile.emergency_contact.relation }}</p>
-        </div>
-        <div>
-          <p class="label">Phone</p>
-          <p class="value">{{ profile.emergency_contact.phone }}</p>
-        </div>
-      </div>
+    <div class="grid md:grid-cols-3 gap-4">
+      <div><p class="label">Name</p><p class="value">{{ profile.emergency_contact.name }}</p></div>
+      <div><p class="label">Relation</p><p class="value">{{ profile.emergency_contact.relation }}</p></div>
+      <div><p class="label">Phone</p><p class="value">{{ profile.emergency_contact.phone }}</p></div>
+    </div>
     {% else %}
       <p class="text-gray-500">No emergency contact added</p>
     {% endif %}
   </div>
 
   <!-- DOCUMENTS -->
-<div class="bg-white rounded-2xl shadow p-6">
-  <h2 class="text-lg font-semibold text-teal-700 mb-4">Documents</h2>
-
-  <div class="space-y-4">
-
-    <!-- Aadhaar -->
-    <div class="flex justify-between items-center">
-      <div>
-        <p class="font-medium">🪪 Aadhaar</p>
-        <p class="text-sm text-gray-500">
-          {{ profile.aadhaar_number or "Not provided" }}
-        </p>
-      </div>
-
-      {% if profile.aadhaar_signed_url %}
-        <a href="{{ profile.aadhaar_signed_url }}"
-           target="_blank"
-           class="text-teal-600 font-semibold hover:underline">
-          View
-        </a>
-      {% else %}
-        <span class="text-gray-400">Not uploaded</span>
-      {% endif %}
-    </div>
-
-    <!-- Insurance -->
-    <div class="flex justify-between items-center">
-      <div>
-        <p class="font-medium">🛡️ Medical Insurance</p>
-        <p class="text-sm text-gray-500">
-          Insurance document
-        </p>
-      </div>
-
-      {% if profile.insurance_signed_url %}
-        <a href="{{ profile.insurance_signed_url }}"
-           target="_blank"
-           class="text-teal-600 font-semibold hover:underline">
-          View
-        </a>
-      {% else %}
-        <span class="text-gray-400">Not uploaded</span>
-      {% endif %}
-    </div>
-
-  </div>
-
-  <p class="text-xs text-gray-500 mt-4">
-    🔒 Documents are securely accessible for a limited time only.
-  </p>
-</div>
-
-
-  <!-- ACTIONS -->
   <div class="bg-white rounded-2xl shadow p-6">
-    <a href="/patient/medical-records"
-       class="block w-full md:w-auto text-center bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-teal-700 transition">
-      📁 View Medical Records
-    </a>
+    <h2 class="text-lg font-semibold text-teal-700 mb-4">Documents</h2>
+
+    <div class="space-y-4">
+      <div class="flex justify-between items-center">
+        <div>
+          <p class="font-medium">🪪 Aadhaar</p>
+          <p class="text-sm text-gray-500">{{ profile.aadhaar_number or "Not provided" }}</p>
+        </div>
+        {% if profile.aadhaar_signed_url %}
+          <a href="{{ profile.aadhaar_signed_url }}" target="_blank"
+             class="text-teal-600 font-semibold hover:underline">View</a>
+        {% else %}
+          <span class="text-gray-400">Not uploaded</span>
+        {% endif %}
+      </div>
+
+      <div class="flex justify-between items-center">
+        <div>
+          <p class="font-medium">🛡️ Medical Insurance</p>
+          <p class="text-sm text-gray-500">Insurance document</p>
+        </div>
+        {% if profile.insurance_signed_url %}
+          <a href="{{ profile.insurance_signed_url }}" target="_blank"
+             class="text-teal-600 font-semibold hover:underline">View</a>
+        {% else %}
+          <span class="text-gray-400">Not uploaded</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <p class="text-xs text-gray-500 mt-4">
+      🔒 Documents are securely accessible for a limited time only.
+    </p>
   </div>
 
 </main>
 
-<style>
-.label {
-  font-size: 0.875rem;
-  color: #6b7280;
+<!-- 🔐 OTP POPUP (STAYS UNTIL USER CLOSES) -->
+<div id="otpModal"
+     class="fixed inset-0 hidden bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white rounded-2xl p-6 w-80 text-center shadow-2xl animate-fade-in">
+    <h2 class="text-xl font-bold text-teal-700">Doctor Access OTP</h2>
+
+    <p class="mt-4 text-gray-700">Your OTP is</p>
+
+    <p id="otpValue"
+       class="text-3xl font-bold text-teal-600 tracking-widest mt-2">
+      ------
+    </p>
+
+    <p class="mt-3 text-sm text-gray-500">
+      Please tell this OTP to the doctor.
+    </p>
+
+    <button onclick="closeOtpModal()"
+            class="mt-6 bg-teal-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-teal-700">
+      OK
+    </button>
+  </div>
+</div>
+
+<!-- JS -->
+<script>
+let currentOtp = null;
+let modalOpen = false;
+
+function openOtpModal(otp) {
+  currentOtp = otp;
+  modalOpen = true;
+  document.getElementById("otpValue").innerText = otp;
+  document.getElementById("otpModal").classList.remove("hidden");
 }
-.value {
-  font-size: 1rem;
-  font-weight: 500;
-  color: #111827;
+
+function closeOtpModal() {
+  modalOpen = false;
+  document.getElementById("otpModal").classList.add("hidden");
+}
+
+// Poll every 3 seconds (NO auto close)
+setInterval(async () => {
+  try {
+    if (modalOpen) return;
+
+    const res = await fetch("/patient/check-otp");
+    const data = await res.json();
+
+    if (data.otp && data.otp !== currentOtp) {
+      openOtpModal(data.otp);
+    }
+  } catch (err) {
+    console.error("OTP polling error");
+  }
+}, 3000);
+</script>
+
+<style>
+.label { font-size: 0.875rem; color: #6b7280; }
+.value { font-size: 1rem; font-weight: 500; color: #111827; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out;
 }
 </style>
 
