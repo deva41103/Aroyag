@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>All Appointments – AROgyam</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+
+<!-- HEADER -->
+<header class="bg-white shadow">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold text-indigo-700">All Appointments</h1>
+    <div class="flex gap-4">
+      <a href="/doctor/dashboard" class="text-indigo-600 font-medium">Dashboard</a>
+      <a href="/logout" class="text-red-600 font-medium">Logout</a>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-6xl mx-auto p-4 py-10">
+
+{% if appointments %}
+  <div class="space-y-5">
+    {% for a in appointments %}
+    <div class="bg-white rounded-xl shadow p-6">
+
+      <!-- BASIC INFO -->
+      <div class="flex justify-between items-center mb-3">
+        <div>
+          <p class="font-semibold text-lg">
+            Patient: {{ a.patient_profiles.full_name }}
+          </p>
+          <p class="text-gray-600">
+            Date: {{ a.appointment_date }}
+          </p>
+
+          {% if a.appointment_time %}
+            <p class="text-sm text-gray-500">
+              Time: {{ a.appointment_time }}
+            </p>
+          {% endif %}
+        </div>
+
+        <!-- STATUS -->
+        <span class="px-4 py-1 rounded-full text-white text-sm
+          {% if a.status == 'pending' %} bg-yellow-500
+          {% elif a.status == 'approved' %} bg-green-600
+          {% else %} bg-red-600 {% endif %}">
+          {{ a.status | capitalize }}
+        </span>
+      </div>
+
+      <!-- ACTION -->
+      {% if a.status == 'pending' %}
+        <button
+          onclick="openModal(
+            '{{ a.id }}',
+            '{{ a.patient_profiles.full_name }}',
+            '{{ a.appointment_date }}'
+          )"
+          class="mt-2 bg-indigo-600 text-white px-4 py-2 rounded-lg
+                 font-semibold hover:bg-indigo-700 transition">
+          Review Appointment
+        </button>
+      {% else %}
+        <p class="text-sm text-gray-500 italic">
+          Appointment already {{ a.status }}.
+        </p>
+      {% endif %}
+
+    </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <p class="text-center text-gray-500">
+    No appointments found.
+  </p>
+{% endif %}
+
+</main>
+
+<!-- REVIEW MODAL -->
+<div id="reviewModal"
+     class="fixed inset-0 hidden bg-black bg-opacity-50
+            flex items-center justify-center z-50">
+
+  <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+    <h2 class="text-xl font-bold text-indigo-700 mb-2">
+      Review Appointment
+    </h2>
+
+    <p id="modalPatient" class="text-gray-700"></p>
+    <p id="modalDate" class="text-gray-500 mb-4"></p>
+
+    <form method="POST" class="space-y-3">
+      <input type="hidden" name="appointment_id" id="modalAppointmentId">
+
+      <select name="status" id="modalStatus"
+              class="border p-2 rounded w-full" required>
+        <option value="">Select action</option>
+        <option value="approved">Approve</option>
+        <option value="rejected">Reject</option>
+      </select>
+
+      <input type="time" name="time" id="modalTime"
+             class="border p-2 rounded w-full"
+             placeholder="Select time">
+
+      <textarea name="note"
+        placeholder="Optional note for patient"
+        class="border p-2 rounded w-full"></textarea>
+
+      <div class="flex gap-3 pt-2">
+        <button type="submit"
+          class="flex-1 bg-indigo-600 text-white py-2 rounded-lg
+                 font-semibold hover:bg-indigo-700 transition">
+          Submit
+        </button>
+
+        <button type="button" onclick="closeModal()"
+          class="flex-1 bg-gray-200 text-gray-800 py-2 rounded-lg
+                 font-semibold hover:bg-gray-300 transition">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- JS -->
+<script>
+function openModal(id, patient, date) {
+  document.getElementById("modalAppointmentId").value = id;
+  document.getElementById("modalPatient").innerText = "Patient: " + patient;
+  document.getElementById("modalDate").innerText = "Date: " + date;
+  document.getElementById("reviewModal").classList.remove("hidden");
+}
+
+function closeModal() {
+  document.getElementById("reviewModal").classList.add("hidden");
+}
+
+// Disable time input when rejected
+document.addEventListener("change", function (e) {
+  if (e.target.id === "modalStatus") {
+    document.getElementById("modalTime").disabled =
+      e.target.value === "rejected";
+  }
+});
+</script>
+
+</body>
+</html>

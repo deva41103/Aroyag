@@ -122,12 +122,37 @@
   </div>
 
   <!-- ACTIONS (RESTORED) -->
-  <div class="bg-white rounded-2xl shadow p-6">
-    <a href="/patient/medical-records"
-       class="block w-full md:w-auto text-center bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-teal-700 transition">
-      📁 View Medical Records
+  <!-- ACTIONS -->
+<div class="bg-white rounded-2xl shadow p-6">
+  <div class="grid md:grid-cols-3 gap-4">
+
+    <!-- BOOK APPOINTMENT -->
+    <a href="/patient/doctors"
+       class="flex items-center justify-center gap-2
+              bg-teal-600 text-white px-6 py-3 rounded-lg
+              font-semibold hover:bg-teal-700 transition">
+      🩺 Book Appointment
     </a>
+
+    <!-- MY APPOINTMENTS -->
+    <a href="/patient/appointments"
+       class="flex items-center justify-center gap-2
+              bg-indigo-600 text-white px-6 py-3 rounded-lg
+              font-semibold hover:bg-indigo-700 transition">
+      📅 My Appointments
+    </a>
+
+    <!-- MEDICAL RECORDS -->
+    <a href="/patient/medical-records"
+       class="flex items-center justify-center gap-2
+              bg-gray-800 text-white px-6 py-3 rounded-lg
+              font-semibold hover:bg-gray-900 transition">
+      📁 Medical Records
+    </a>
+
   </div>
+</div>
+
 
 </main>
 

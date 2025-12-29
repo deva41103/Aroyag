@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Appointments – AROgyam</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+
+<!-- HEADER -->
+<header class="bg-white shadow">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold text-teal-700">My Appointments</h1>
+    <div class="flex gap-4">
+      <a href="/patient/dashboard" class="text-teal-600 font-medium">Dashboard</a>
+      <a href="/logout" class="text-red-600 font-medium">Logout</a>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-5xl mx-auto p-4 py-10">
+
+  {% if appointments %}
+  <div class="space-y-4">
+    {% for a in appointments %}
+    <div class="bg-white p-5 rounded-xl shadow flex justify-between items-center">
+      <div>
+        <h3 class="font-semibold text-lg">
+          Dr. {{ a.doctor_profiles.full_name }}
+        </h3>
+        <p class="text-gray-600">{{ a.appointment_date }}</p>
+
+        {% if a.appointment_time %}
+          <p class="text-sm text-gray-500">
+            Time: {{ a.appointment_time }}
+          </p>
+        {% endif %}
+      </div>
+
+      <span class="px-4 py-1 rounded-full text-white text-sm
+        {% if a.status == 'pending' %} bg-yellow-500
+        {% elif a.status == 'approved' %} bg-green-600
+        {% else %} bg-red-600 {% endif %}">
+        {{ a.status | capitalize }}
+      </span>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+    <p class="text-gray-500 text-center">No appointments found.</p>
+  {% endif %}
+
+</main>
+
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Book Appointment – AROgyam</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+
+<header class="bg-white shadow">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold text-teal-700">Book Appointment</h1>
+    <a href="/patient/doctors" class="text-teal-600 font-medium">← Back</a>
+  </div>
+</header>
+
+<main class="max-w-md mx-auto py-10 px-4">
+
+  <h2 class="text-lg font-semibold mb-4">
+    Dr. {{ doctor.full_name }}
+  </h2>
+  <p class="text-gray-600 mb-6">{{ doctor.specialization }}</p>
+
+  <form method="POST" class="space-y-4 bg-white p-6 rounded-xl shadow">
+    <input type="date" name="date" required
+      class="w-full border p-2 rounded">
+
+    <textarea name="reason" placeholder="Reason for visit"
+      class="w-full border p-2 rounded"></textarea>
+
+    <button
+      class="w-full bg-teal-600 text-white py-2 rounded-lg
+             font-semibold hover:bg-teal-700 transition">
+      Submit Request
+    </button>
+  </form>
+
+</main>
+
+</body>
+</html>

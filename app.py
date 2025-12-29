@@ -5,6 +5,7 @@ from routes.dashboard import dashboard_bp
 from routes.newborn import newborn_bp
 from routes.medical_records import medical_bp
 from routes.patient_records import patient_records_bp
+from routes.appointments import appointments_bp
 import os
 
 
@@ -21,7 +22,7 @@ def create_app():
     app.register_blueprint(newborn_bp)
     app.register_blueprint(medical_bp)
     app.register_blueprint(patient_records_bp)
-
+    app.register_blueprint(appointments_bp)
     return app
 
 
